@@ -231,6 +231,7 @@ Bundle 'jelera/vim-javascript-syntax'
 Bundle "gcmt/breeze.vim"
 Bundle "nathanaelkane/vim-indent-guides"
 Bundle "tpope/vim-fugitive"
+Bundle "git@github.com:scrooloose/nerdcommenter.git"
 
 " Mapping to NERDTree
 nnoremap <C-n> :NERDTreeToggle<cr>
