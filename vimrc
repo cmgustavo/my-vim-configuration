@@ -23,10 +23,10 @@ set autoindent
 set showmode
 set showcmd
 set hidden
-"set wildmenu
-"set wildmode=list:longest
+set wildmenu
+set wildmode=list:longest
 set visualbell
-"set autochdir
+set autochdir
 
 set cursorline
 set ttyfast
@@ -38,10 +38,10 @@ set relativenumber
 set number
 set norelativenumber
 
-"set undofile
-"set shell=/bin/bash
-"set lazyredraw
-"set matchtime=3
+set undofile
+set shell=/bin/bash
+set lazyredraw
+set matchtime=3
 
 "Changing Leader Key
 let mapleader = ","
@@ -68,13 +68,13 @@ set mouse=a
 "vnoremap / /\v
 set ignorecase
 set smartcase
-"set gdefault
+set gdefault
 set incsearch
 set showmatch
 set hlsearch
-"nnoremap <leader><space> :noh<cr>
-"nnoremap <tab> %
-"vnoremap <tab> %
+nnoremap <leader><space> :noh<cr>
+nnoremap <tab> %
+vnoremap <tab> %
 
 
 " Make Vim to handle long lines nicely.
@@ -92,7 +92,7 @@ au BufRead,BufNewFile *.md set filetype=markdown
 
 " To  show special characters in Vim
 "set list
-set listchars=tab:▸\ ,eol:¬
+"set listchars=tab:▸\ ,eol:¬
 
 " Naviagations using keys up/down/left/right
 " Disabling default keys to learn the hjkl
@@ -151,17 +151,17 @@ au VimResized * :wincmd =
 " Wildmenu completion "
 "set wildmenu
 "set wildmode=list:longest
-"set wildignore+=.hg,.git,.svn " Version Controls"
+set wildignore+=.hg,.git,.svn " Version Controls"
 "set wildignore+=*.aux,*.out,*.toc "Latex Indermediate files"
 "set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg "Binary Imgs"
 "set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest "Compiled Object files"
 "set wildignore+=*.spl "Compiled speolling world list"
-"set wildignore+=*.sw? "Vim swap files"
-"set wildignore+=*.DS_Store "OSX SHIT"
+set wildignore+=*.sw? "Vim swap files"
+set wildignore+=*.DS_Store "OSX SHIT"
 "set wildignore+=*.luac "Lua byte code"
 "set wildignore+=migrations "Django migrations"
 "set wildignore+=*.pyc "Python Object codes"
-"set wildignore+=*.orig "Merge resolution files"
+set wildignore+=*.orig "Merge resolution files"
 
 
 " Make Sure that Vim returns to the same line when we reopen a file"
@@ -189,16 +189,13 @@ if has("gui_running")
     set guioptions-=L
     set guioptions+=a
     set guioptions-=m
-"    colo solarized
     set listchars=tab:▸\ ,eol:¬         " Invisibles using the Textmate style
-    set transparency=2
+"    set transparency=1
     set background=dark
     colorscheme solarized
 else
-"    set t_Co=256
-"    set background=light
     set t_Co=256
-    colorschem badwolf
+    colorscheme hybrid
 endif
 
 " Special Settings for Consoles
@@ -207,7 +204,7 @@ endif
 "    colorschem badwolf
 "endif
 " Source the vimrc file after saving it
-"autocmd bufwritepost .vimrc source ~/.vimrc
+autocmd bufwritepost .vimrc source ~/.vimrc
 
 " ========== END Gvim Settings ==========
 
@@ -225,13 +222,23 @@ Bundle 'git@github.com:scrooloose/nerdtree.git'
 Bundle 'git@github.com:corntrace/bufexplorer.git'
 Bundle 'git@github.com:Valloric/YouCompleteMe.git'
 "Bundle 'git@github.com:digitaltoad/vim-jade.git'
-Bundle 'git@github.com:scrooloose/syntastic.git'
+"Bundle 'git@github.com:scrooloose/syntastic.git'
 Bundle 'jelera/vim-javascript-syntax'
-"Bundle "mattn/emmet-vim"
-Bundle "gcmt/breeze.vim"
-Bundle "nathanaelkane/vim-indent-guides"
-Bundle "tpope/vim-fugitive"
-Bundle "git@github.com:scrooloose/nerdcommenter.git"
+"Bundle 'mattn/emmet-vim'
+Bundle 'gcmt/breeze.vim'
+Bundle 'nathanaelkane/vim-indent-guides'
+Bundle 'tpope/vim-fugitive'
+Bundle 'git@github.com:scrooloose/nerdcommenter.git'
+"Bundle 'https://github.com/vim-perl/vim-perl.git'
+Bundle 'Raimondi/delimitMate'
+
+" better than grep
+Bundle 'mileszs/ack.vim'
+
+Bundle "Chiel92/vim-autoformat"
+map <silent> ,F  :Autoformat<CR>
+" autoformat when save
+au BufWritePost *.js :Autoformat
 
 " Mapping to NERDTree
 nnoremap <C-n> :NERDTreeToggle<cr>
@@ -246,6 +253,7 @@ map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules . <CR>
 "
 map <D-\|>  :b#<CR>
 map <D-S-BS> :bdelete<CR>
+map <D-+>  :BufExplorer<CR>
 
 function! InsertConsoleLog()
     let word = expand("<cword>")
@@ -255,7 +263,7 @@ endfunction
 
 map <silent> ,v :call InsertConsoleLog()<CR>bbbbi
 
-nmap <D->> :bnext<CR>
-nmap <D-<> :bprev<CR>
-map <D-+>  :BufExplorer<CR>
+"syntax highlighting for TT
+"au BufNewFile,BufRead *.tt setf tt2
+":let b:tt2_syn_tags = '\[% %] <!-- -->'
 
