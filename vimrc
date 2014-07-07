@@ -15,6 +15,13 @@ set scrolloff=3
 set visualbell
 "set cursorline
 set ruler
+set ttyfast
+set undofile
+set shell=/bin/bash
+set lazyredraw
+set matchtime=3
+set hidden
+set autoindent
 
 "Changing Leader Key
 let mapleader = ","
@@ -40,7 +47,7 @@ set hlsearch
 set wrap
 set textwidth=79
 set formatoptions=qrn1
-set colorcolumn=79
+"set colorcolumn=79
 
 " Syntax highlight for github .md files "
 au BufRead,BufNewFile *.md set filetype=markdown
@@ -51,9 +58,13 @@ inoremap <leader>j <ESC>:RopeGotoDefinition<cr>
 " Map : to ; also in command mode.
 nnoremap ; :
 
+" Working with split screen nicely
+" Resize Split When the window is resized"
+au VimResized * :wincmd =
+
 " Wildmenu completion "
-"set wildmenu
-"set wildmode=list:longest
+set wildmenu
+set wildmode=longest:full,full
 set wildignore+=.hg,.git,.svn " Version Controls"
 set wildignore+=*.aux,*.out,*.toc "Latex Indermediate files"
 set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg "Binary Imgs"
@@ -93,7 +104,7 @@ if has("gui_running")
   set guioptions+=a
   set guioptions-=m
   set listchars=tab:▸\ ,eol:¬         " Invisibles using the Textmate style
-"  set transparency=1
+  "  set transparency=1
   set background=dark
   colorscheme solarized
 else
@@ -116,19 +127,20 @@ Plugin 'gmarik/vundle'
 
 Plugin 'git@github.com:scrooloose/nerdtree.git'
 Plugin 'git@github.com:corntrace/bufexplorer.git'
-"Plugin 'git@github.com:Valloric/YouCompleteMe.git'
+Plugin 'git@github.com:Valloric/YouCompleteMe.git'
 "Plugin 'git@github.com:digitaltoad/vim-jade.git'
 "Plugin 'git@github.com:scrooloose/syntastic.git'
-"Plugin 'jelera/vim-javascript-syntax'
+Plugin 'jelera/vim-javascript-syntax'
 "Plugin 'mattn/emmet-vim'
-"Plugin 'gcmt/breeze.vim'
-"Plugin 'nathanaelkane/vim-indent-guides'
-"Plugin 'tpope/vim-fugitive'
-"Plugin 'git@github.com:scrooloose/nerdcommenter.git'
+Plugin 'gcmt/breeze.vim'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'tpope/vim-fugitive'
+Plugin 'git@github.com:scrooloose/nerdcommenter.git'
 "Plugin 'https://github.com/vim-perl/vim-perl.git'
-"Plugin 'Raimondi/delimitMate'
-"Plugin 'mileszs/ack.vim'
+Plugin 'Raimondi/delimitMate'
+Plugin 'mileszs/ack.vim'
 Plugin 'Chiel92/vim-autoformat'
+Plugin 'bling/vim-airline'
 
 call vundle#end()
 filetype plugin indent on
@@ -158,10 +170,16 @@ map <silent> ,F  :Autoformat<CR>
 nnoremap <C-n> :NERDTreeToggle<cr>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 
-"map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules . <CR>
+map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules . <CR>
 
 
 "syntax highlighting for TT
 "au BufNewFile,BufRead *.tt setf tt2
 ":let b:tt2_syn_tags = '\[% %] <!-- -->'
+
+
+
+" =========== Status Bar =========="
+"
+set laststatus=2
 
