@@ -152,6 +152,7 @@ Plugin 'Raimondi/delimitMate'
 "Plugin 'mileszs/ack.vim'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'bling/vim-airline'
+Plugin 'git@github.com:Valloric/MatchTagAlways.git'
 
 call vundle#end()
 filetype plugin indent on
