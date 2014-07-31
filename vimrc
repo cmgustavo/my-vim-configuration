@@ -13,7 +13,7 @@ set expandtab
 set encoding=utf-8
 set scrolloff=3
 set visualbell
-"set cursorline
+set cursorline
 set ruler
 set ttyfast
 set undofile
@@ -22,6 +22,12 @@ set lazyredraw
 set matchtime=3
 set hidden
 set autoindent
+
+set backspace=indent,eol,start
+"set relativenumber
+set number
+set norelativenumber
+set pastetoggle=<F3>
 
 "Changing Leader Key
 let mapleader = ","
@@ -36,12 +42,17 @@ set backupdir=/tmp
 set mouse=a
 
 "Settings for Searching and Moving
+nnoremap / /\v
+vnoremap / /\v
 set ignorecase
 set smartcase
 set gdefault
 set incsearch
 set showmatch
 set hlsearch
+nnoremap <leader><space> :noh<cr>
+nnoremap <tab> %
+vnoremap <tab> %
 
 " Make Vim to handle long lines nicely.
 set wrap
@@ -138,7 +149,7 @@ Plugin 'tpope/vim-fugitive'
 Plugin 'git@github.com:scrooloose/nerdcommenter.git'
 "Plugin 'https://github.com/vim-perl/vim-perl.git'
 Plugin 'Raimondi/delimitMate'
-Plugin 'mileszs/ack.vim'
+"Plugin 'mileszs/ack.vim'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'bling/vim-airline'
 
@@ -150,9 +161,9 @@ filetype plugin indent on
 
 " =========== Custom Settings =========="
 "
-map <D-\|>  :b#<CR>
+map <D-*>  :b#<CR>
 map <D-S-BS> :bdelete<CR>
-map <D-+>  :BufExplorer<CR>
+map <D-¿>  :BufExplorer<CR>
 
 function! InsertConsoleLog()
   let word = expand("<cword>")
@@ -170,7 +181,7 @@ map <silent> ,F  :Autoformat<CR>
 nnoremap <C-n> :NERDTreeToggle<cr>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 
-map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules . <CR>
+map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules --exclude=android  --exclude=bin --exclude=browser-extensions --exclude=css --exclude=dist --exclude=font --exclude=img --exclude=lib --exclude=mobile --exclude=shell --exclude=sound --exclude=test --exclude=util --exclude=views --exclude=webapp . <CR>
 
 
 "syntax highlighting for TT
