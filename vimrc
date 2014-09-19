@@ -13,7 +13,6 @@ set expandtab
 set encoding=utf-8
 set scrolloff=3
 set visualbell
-set cursorline
 set ruler
 set ttyfast
 set undofile
@@ -24,9 +23,6 @@ set hidden
 set autoindent
 
 set backspace=indent,eol,start
-"set relativenumber
-set number
-set norelativenumber
 set pastetoggle=<F3>
 
 "Changing Leader Key
@@ -37,9 +33,6 @@ set backupskip=/tmp/*,/private/tmp/*"
 
 " No swap file in current folder
 set backupdir=/tmp
-
-" Enable Mouse
-set mouse=a
 
 "Settings for Searching and Moving
 nnoremap / /\v
@@ -118,6 +111,12 @@ if has("gui_running")
   "  set transparency=1
   set background=dark
   colorscheme solarized
+  set cursorline
+  "set relativenumber
+  set number
+  set norelativenumber
+  " Enable Mouse
+  set mouse=a
 else
   set t_Co=256
 endif
@@ -138,7 +137,9 @@ Plugin 'gmarik/vundle'
 
 Plugin 'git@github.com:scrooloose/nerdtree.git'
 Plugin 'git@github.com:corntrace/bufexplorer.git'
-Plugin 'git@github.com:Valloric/YouCompleteMe.git'
+if has("gui_running")
+  Plugin 'git@github.com:Valloric/YouCompleteMe.git'
+endif
 "Plugin 'git@github.com:digitaltoad/vim-jade.git'
 "Plugin 'git@github.com:scrooloose/syntastic.git'
 Plugin 'jelera/vim-javascript-syntax'
