@@ -21,6 +21,9 @@ set lazyredraw
 set matchtime=3
 set hidden
 set autoindent
+set relativenumber
+set number
+set norelativenumber
 
 set backspace=indent,eol,start
 set pastetoggle=<F3>
@@ -49,15 +52,20 @@ vnoremap <tab> %
 
 " Make Vim to handle long lines nicely.
 set wrap
-set textwidth=79
+set textwidth=120
 set formatoptions=qrn1
-"set colorcolumn=79
+set colorcolumn=120
 
 " Syntax highlight for github .md files "
 au BufRead,BufNewFile *.md set filetype=markdown
 
 " Rope settings."
 inoremap <leader>j <ESC>:RopeGotoDefinition<cr>
+
+" Get Rid of stupid Goddamned help keys
+inoremap <F1> <ESC>
+nnoremap <F1> <ESC>
+vnoremap <F1> <ESC>
 
 " Map : to ; also in command mode.
 nnoremap ; :
@@ -108,17 +116,14 @@ if has("gui_running")
   set guioptions+=a
   set guioptions-=m
   set listchars=tab:▸\ ,eol:¬         " Invisibles using the Textmate style
-  "  set transparency=1
+  set transparency=1
   set background=dark
   colorscheme solarized
   set cursorline
-  "set relativenumber
-  set number
-  set norelativenumber
-  " Enable Mouse
   set mouse=a
 else
   set t_Co=256
+  colorscheme badwolf
 endif
 
 " ========== END Gvim Settings ==========
@@ -143,7 +148,7 @@ endif
 "Plugin 'git@github.com:digitaltoad/vim-jade.git'
 "Plugin 'git@github.com:scrooloose/syntastic.git'
 Plugin 'jelera/vim-javascript-syntax'
-"Plugin 'mattn/emmet-vim'
+Plugin 'mattn/emmet-vim'
 Plugin 'gcmt/breeze.vim'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'tpope/vim-fugitive'
@@ -154,6 +159,7 @@ Plugin 'Raimondi/delimitMate'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'bling/vim-airline'
 Plugin 'git@github.com:Valloric/MatchTagAlways.git'
+Plugin 'flazz/vim-colorschemes'
 
 call vundle#end()
 filetype plugin indent on
