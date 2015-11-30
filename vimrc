@@ -160,6 +160,8 @@ Plugin 'Chiel92/vim-autoformat'
 Plugin 'bling/vim-airline'
 Plugin 'git@github.com:Valloric/MatchTagAlways.git'
 Plugin 'flazz/vim-colorschemes'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'einars/js-beautify'
 
 call vundle#end()
 filetype plugin indent on
