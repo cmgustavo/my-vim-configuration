@@ -25,6 +25,8 @@ set relativenumber
 set number
 set norelativenumber
 
+set autoread
+
 set backspace=indent,eol,start
 set pastetoggle=<F3>
 
@@ -137,7 +139,7 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 
-" required! 
+" required!
 Plugin 'gmarik/vundle'
 
 Plugin 'git@github.com:scrooloose/nerdtree.git'
@@ -148,20 +150,27 @@ endif
 "Plugin 'git@github.com:digitaltoad/vim-jade.git'
 "Plugin 'git@github.com:scrooloose/syntastic.git'
 Plugin 'jelera/vim-javascript-syntax'
-Plugin 'mattn/emmet-vim'
-Plugin 'gcmt/breeze.vim'
-Plugin 'nathanaelkane/vim-indent-guides'
+"Plugin 'mattn/emmet-vim'
+"Plugin 'gcmt/breeze.vim'
+"Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'tpope/vim-fugitive'
 Plugin 'git@github.com:scrooloose/nerdcommenter.git'
 "Plugin 'https://github.com/vim-perl/vim-perl.git'
-Plugin 'Raimondi/delimitMate'
+"Plugin 'Raimondi/delimitMate'
 "Plugin 'mileszs/ack.vim'
-Plugin 'Chiel92/vim-autoformat'
-Plugin 'bling/vim-airline'
+"Plugin 'Chiel92/vim-autoformat'
+"Plugin 'vim-airline/vim-airline'
+"Plugin 'vim-airline/vim-airline-themes'
 Plugin 'git@github.com:Valloric/MatchTagAlways.git'
 Plugin 'flazz/vim-colorschemes'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'einars/js-beautify'
+"Plugin 'Shougo/vimproc'
+"Plugin 'leafgarland/typescript-vim'
+"if has("gui_running")
+"  Plugin 'Quramy/tsuquyomi'
+"endif
+Plugin 'editorconfig/editorconfig-vim'
 
 call vundle#end()
 filetype plugin indent on
@@ -183,7 +192,9 @@ endfunction
 
 map <silent> ,v :call InsertConsoleLog()<CR>bbbbi
 
-map <silent> ,F  :Autoformat<CR>
+map <silent> ,F :call JsBeautify()<cr>
+
+"map <silent> ,F  :Autoformat<CR>
 " autoformat when save
 "au BufWritePost *.js :Autoformat
 
@@ -191,16 +202,32 @@ map <silent> ,F  :Autoformat<CR>
 nnoremap <C-n> :NERDTreeToggle<cr>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 
-map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules --exclude=android  --exclude=bin --exclude=browser-extensions --exclude=css --exclude=dist --exclude=font --exclude=img --exclude=lib --exclude=mobile --exclude=shell --exclude=sound --exclude=test --exclude=util --exclude=views --exclude=webapp . <CR>
+map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules --exclude=android --exclude=bin --exclude=browser-extensions --exclude=css --exclude=dist --exclude=font --exclude=img --exclude=lib --exclude=mobile --exclude=shell --exclude=sound --exclude=test --exclude=util --exclude=views --exclude=webapp --exclude=cordova --exclude=webkitbuilds --exclude=i18n --exclude=config-templates --exclude=bower_components --exclude=cache --exclude=angular-bitcore-wallet-client --exclude=etc --exclude=sass . <CR>
 
 
 "syntax highlighting for TT
 "au BufNewFile,BufRead *.tt setf tt2
 ":let b:tt2_syn_tags = '\[% %] <!-- -->'
 
+" Fix for fugitive and editorconfig
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+
+
+au BufRead,BufNewFile *.ts set filetype=typescript
+
+if !exists("g:ycm_semantic_triggers")
+  let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers['typescript'] = ['.']
 
 
 " =========== Status Bar =========="
 "
 set laststatus=2
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+
+" Enable air-line
+"let g:airline#extensions#tabline#enabled = 0
+"let g:airline_theme='solarized'
+"let g:solarized_base16 = 1
 
