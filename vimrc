@@ -166,7 +166,7 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'maksimr/vim-jsbeautify'
 Plugin 'einars/js-beautify'
 "Plugin 'Shougo/vimproc'
-"Plugin 'leafgarland/typescript-vim'
+Plugin 'leafgarland/typescript-vim'
 "if has("gui_running")
 "  Plugin 'Quramy/tsuquyomi'
 "endif
