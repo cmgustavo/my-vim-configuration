@@ -1,36 +1,39 @@
 " ========== Vim Basic Settings ============="
 
-" Syntax hightlight "
+" Syntax hightlight
 syntax on
 
-"TAB settings.
+" Keep more info in memory to speed things up
+set hidden
+set history=100
+
+" Have some logic when indenting
+filetype indent on
+set nowrap
 set tabstop=2
 set shiftwidth=2
-set softtabstop=2
 set expandtab
-
-" More Common Settings.
-set encoding=utf-8
-set scrolloff=3
-set visualbell
-set ruler
-set ttyfast
-set undofile
-set shell=/bin/bash
-set lazyredraw
-set matchtime=3
-set hidden
+set smartindent
 set autoindent
-set relativenumber
+
+" More Common Settings
+set undofile
+
+" Line Number
 set number
 set norelativenumber
 
-set autoread
+" Better Search
+set hlsearch
+set ignorecase
+set incsearch
+" Cancel search with ESC
+nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 
-set backspace=indent,eol,start
-set pastetoggle=<F3>
+" Show Matching Parenthesis
+set showmatch
 
-"Changing Leader Key
+" Changing Leader Key
 let mapleader = ","
 
 " Make Vim able to edit corntab fiels again.
@@ -39,44 +42,17 @@ set backupskip=/tmp/*,/private/tmp/*"
 " No swap file in current folder
 set backupdir=/tmp
 
-"Settings for Searching and Moving
-nnoremap / /\v
-vnoremap / /\v
-set ignorecase
-set smartcase
-set gdefault
-set incsearch
-set showmatch
-set hlsearch
-nnoremap <leader><space> :noh<cr>
-nnoremap <tab> %
-vnoremap <tab> %
-
-" Make Vim to handle long lines nicely.
-set wrap
-set textwidth=120
-set formatoptions=qrn1
-set colorcolumn=120
-
-" Syntax highlight for github .md files "
-au BufRead,BufNewFile *.md set filetype=markdown
-
-" Rope settings."
-inoremap <leader>j <ESC>:RopeGotoDefinition<cr>
-
-" Get Rid of stupid Goddamned help keys
-inoremap <F1> <ESC>
-nnoremap <F1> <ESC>
-vnoremap <F1> <ESC>
-
 " Map : to ; also in command mode.
 nnoremap ; :
 
-" Working with split screen nicely
-" Resize Split When the window is resized"
-au VimResized * :wincmd =
+" Make Vim to handle long lines nicely.
+set wrap
 
-" Wildmenu completion "
+" =========== END Basic Vim Settings ===========
+
+" =========== Advanced Vim Settings ===========
+
+" Wildmenu completion
 set wildmenu
 set wildmode=longest:full,full
 set wildignore+=.hg,.git,.svn " Version Controls"
@@ -90,6 +66,7 @@ set wildignore+=*.luac "Lua byte code"
 set wildignore+=migrations "Django migrations"
 set wildignore+=*.pyc "Python Object codes"
 set wildignore+=*.orig "Merge resolution files"
+set wildignore+=*/tmp/*,*.so,*.zip
 
 " Make Sure that Vim returns to the same line when we reopen a file"
 augroup line_return
@@ -100,32 +77,50 @@ augroup line_return
         \ endif
 augroup END
 
-" Source the vimrc file after saving it
-"autocmd bufwritepost .vimrc source ~/.vimrc
+" Autocomplete Single Quotes, Parenthesis, Etc.
+function! ConditionalPairMap(open, close)
+  let line = getline('.')
+  let col = col('.')
+  if col < col('$') || stridx(line, a:close, col + 1) != -1
+    return a:open
+  else
+    return a:open . a:close . repeat("\<left>", len(a:close))
+  endif
+endf
+inoremap <expr> ( ConditionalPairMap('(', ')')
+inoremap <expr> { ConditionalPairMap('{', '}')
+inoremap <expr> [ ConditionalPairMap('[', ']')
+inoremap /*          /**/<Left><Left>
+inoremap /*<Space>   /*<Space><Space>*/<Left><Left><Left>
+inoremap /*<CR>      /*<CR>*/<Esc>O
+inoremap <Leader>/*  /*
 
-" =========== END Basic Vim Settings ===========
+" Switch to latest buffer opened
+map <D-*>  :b#<CR>
+
+" =========== END Advanced Vim Settings ===========
 
 " =========== Gvim Settings =============
 
 syntax enable
 
-" Removing scrollbars
+set background=dark
 if has("gui_running")
+  colorscheme Tomorrow-Night
+  set guifont=Hack\ Regular:h14
+  set cursorline
+  set mouse=a
+  " Removing scrollbars
   set guitablabel=%-0.12t%M
   set guioptions-=T
   set guioptions-=r
   set guioptions-=L
   set guioptions+=a
   set guioptions-=m
-  set listchars=tab:▸\ ,eol:¬         " Invisibles using the Textmate style
-  set transparency=1
-  set background=dark
-  colorscheme solarized
-  set cursorline
-  set mouse=a
+  set listchars=tab:▸\ ,eol:¬
 else
-  set t_Co=256
   colorscheme badwolf
+  set t_Co=256
 endif
 
 " ========== END Gvim Settings ==========
@@ -133,57 +128,38 @@ endif
 
 " ========== Plugin Settings =========="
 
-set nocompatible
-filetype off
+set nocompatible              " be iMproved, required
+filetype off                  " required
 
+" set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
 
-" required!
-Plugin 'gmarik/vundle'
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
 
+" Plugins
+Plugin 'flazz/vim-colorschemes'
 Plugin 'git@github.com:scrooloose/nerdtree.git'
-Plugin 'git@github.com:corntrace/bufexplorer.git'
+Plugin 'editorconfig/editorconfig-vim'
+Plugin 'wincent/command-t'
+Plugin 'tpope/vim-fugitive'
+Plugin 'itchyny/lightline.vim'
 if has("gui_running")
   Plugin 'git@github.com:Valloric/YouCompleteMe.git'
 endif
-"Plugin 'git@github.com:digitaltoad/vim-jade.git'
-"Plugin 'git@github.com:scrooloose/syntastic.git'
-Plugin 'jelera/vim-javascript-syntax'
-"Plugin 'mattn/emmet-vim'
-"Plugin 'gcmt/breeze.vim'
-"Plugin 'nathanaelkane/vim-indent-guides'
-Plugin 'tpope/vim-fugitive'
-Plugin 'git@github.com:scrooloose/nerdcommenter.git'
-"Plugin 'https://github.com/vim-perl/vim-perl.git'
-"Plugin 'Raimondi/delimitMate'
-"Plugin 'mileszs/ack.vim'
-"Plugin 'Chiel92/vim-autoformat'
-"Plugin 'vim-airline/vim-airline'
-"Plugin 'vim-airline/vim-airline-themes'
 Plugin 'git@github.com:Valloric/MatchTagAlways.git'
-Plugin 'flazz/vim-colorschemes'
-Plugin 'maksimr/vim-jsbeautify'
-Plugin 'einars/js-beautify'
-"Plugin 'Shougo/vimproc'
-Plugin 'leafgarland/typescript-vim'
-"if has("gui_running")
-"  Plugin 'Quramy/tsuquyomi'
-"endif
-Plugin 'editorconfig/editorconfig-vim'
+Plugin 'HerringtonDarkholme/yats'
+Plugin 'othree/yajs.vim'
 
 call vundle#end()
 filetype plugin indent on
 
 " =========== END Plugin Settings =========="
-"
 
 " =========== Custom Settings =========="
-"
-map <D-*>  :b#<CR>
-map <D-S-BS> :bdelete<CR>
-map <D-¿>  :BufExplorer<CR>
-
 function! InsertConsoleLog()
   let word = expand("<cword>")
   let linenumber = line(".")
@@ -192,42 +168,84 @@ endfunction
 
 map <silent> ,v :call InsertConsoleLog()<CR>bbbbi
 
-map <silent> ,F :call JsBeautify()<cr>
-
-"map <silent> ,F  :Autoformat<CR>
-" autoformat when save
-"au BufWritePost *.js :Autoformat
+" Fix for fugitive and editorconfig
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 " Mapping to NERDTree
 nnoremap <C-n> :NERDTreeToggle<cr>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 
-map <F2> :! /usr/local/bin/ctags --recurse=yes --exclude=node_modules --exclude=android --exclude=bin --exclude=browser-extensions --exclude=css --exclude=dist --exclude=font --exclude=img --exclude=lib --exclude=mobile --exclude=shell --exclude=sound --exclude=test --exclude=util --exclude=views --exclude=webapp --exclude=cordova --exclude=webkitbuilds --exclude=i18n --exclude=config-templates --exclude=bower_components --exclude=cache --exclude=angular-bitcore-wallet-client --exclude=etc --exclude=sass . <CR>
-
-
-"syntax highlighting for TT
-"au BufNewFile,BufRead *.tt setf tt2
-":let b:tt2_syn_tags = '\[% %] <!-- -->'
-
-" Fix for fugitive and editorconfig
-let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
-
-
-au BufRead,BufNewFile *.ts set filetype=typescript
-
-if !exists("g:ycm_semantic_triggers")
-  let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers['typescript'] = ['.']
-
+" Jump to HTML tag
+nnoremap <leader>% :MtaJumpToOtherTag<cr>
 
 " =========== Status Bar =========="
-"
 set laststatus=2
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+set noshowmode
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
+      \   'right': [ ['percent'], [ 'fileencoding', 'filetype' ] ]
+      \ },
+      \ 'component_function': {
+      \   'fugitive': 'LightlineFugitive',
+      \   'filename': 'LightlineFilename',
+      \   'filetype': 'LightlineFiletype',
+      \   'fileencoding': 'LightlineFileencoding',
+      \   'mode': 'LightlineMode',
+      \ },
+      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
+      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+      \ }
 
-" Enable air-line
-"let g:airline#extensions#tabline#enabled = 0
-"let g:airline_theme='solarized'
-"let g:solarized_base16 = 1
+function! LightlineModified()
+  return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+endfunction
 
+function! LightlineReadonly()
+  return &ft !~? 'help' && &readonly ? '' : ''
+endfunction
+
+function! LightlineFilename()
+  let fname = expand('%:t')
+  return fname == '__Tagbar__' ? g:lightline.fname :
+        \ fname =~ '__Gundo\|NERD_tree' ? '' :
+        \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
+        \ &ft == 'unite' ? unite#get_status_string() :
+        \ &ft == 'vimshell' ? vimshell#get_status_string() :
+        \ ('' != LightlineReadonly() ? LightlineReadonly() . ' ' : '') .
+        \ ('' != fname ? fname : '[No Name]') .
+        \ ('' != LightlineModified() ? ' ' . LightlineModified() : '')
+endfunction
+
+function! LightlineFugitive()
+  try
+    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+      let mark = ' '  " edit here for cool mark
+      let branch = fugitive#head()
+      return branch !=# '' ? mark.branch : ''
+    endif
+  catch
+  endtry
+  return ''
+endfunction
+
+function! LightlineFiletype()
+  return winwidth(0) > 70 ? (&filetype !=# '' ? &filetype : 'no ft') : ''
+endfunction
+
+function! LightlineFileencoding()
+  return winwidth(0) > 70 ? (&fenc !=# '' ? &fenc : &enc) : ''
+endfunction
+
+function! LightlineMode()
+  let fname = expand('%:t')
+  return fname == '__Tagbar__' ? 'Tagbar' :
+        \ fname == '__Gundo__' ? 'Gundo' :
+        \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+        \ fname =~ 'NERD_tree' ? 'NERDTree' :
+        \ &ft == 'unite' ? 'Unite' :
+        \ &ft == 'vimfiler' ? 'VimFiler' :
+        \ &ft == 'vimshell' ? 'VimShell' :
+        \ winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
