@@ -12,23 +12,45 @@ filetype indent on
 set nowrap
 set tabstop=2
 set shiftwidth=2
+set softtabstop=2
 set expandtab
 set smartindent
 set autoindent
 
 " More Common Settings
+set encoding=utf-8
+set scrolloff=3
+set visualbell
+set ruler
+set ttyfast
 set undofile
+set shell=/bin/bash
+set lazyredraw
+set matchtime=3
+set autoread
+set backspace=indent,eol,start
+set pastetoggle=<F3>
 
 " Line Number
+set relativenumber
 set number
 set norelativenumber
 
 " Better Search
+nnoremap / /\v
+vnoremap / /\v
 set hlsearch
 set ignorecase
 set incsearch
-" Cancel search with ESC
-nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
+set smartcase
+set gdefault
+if has("gui_running")
+  " Cancel search with ESC
+  nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
+endif
+nnoremap <leader><space> :noh<cr>
+nnoremap <tab> %
+vnoremap <tab> %
 
 " Show Matching Parenthesis
 set showmatch
@@ -47,6 +69,9 @@ nnoremap ; :
 
 " Make Vim to handle long lines nicely.
 set wrap
+set textwidth=120
+set formatoptions=qrn1
+set colorcolumn=120
 
 " =========== END Basic Vim Settings ===========
 
@@ -77,36 +102,19 @@ augroup line_return
         \ endif
 augroup END
 
-" Autocomplete Single Quotes, Parenthesis, Etc.
-function! ConditionalPairMap(open, close)
-  let line = getline('.')
-  let col = col('.')
-  if col < col('$') || stridx(line, a:close, col + 1) != -1
-    return a:open
-  else
-    return a:open . a:close . repeat("\<left>", len(a:close))
-  endif
-endf
-inoremap <expr> ( ConditionalPairMap('(', ')')
-inoremap <expr> { ConditionalPairMap('{', '}')
-inoremap <expr> [ ConditionalPairMap('[', ']')
-inoremap /*          /**/<Left><Left>
-inoremap /*<Space>   /*<Space><Space>*/<Left><Left><Left>
-inoremap /*<CR>      /*<CR>*/<Esc>O
-inoremap <Leader>/*  /*
-
 " Switch to latest buffer opened
 map <D-*>  :b#<CR>
+
+" Syntax highlight for github .md files "
+au BufRead,BufNewFile *.md set filetype=markdown
 
 " =========== END Advanced Vim Settings ===========
 
 " =========== Gvim Settings =============
 
-syntax enable
-
 set background=dark
 if has("gui_running")
-  colorscheme Tomorrow-Night
+  colorscheme solarized
   set guifont=Hack\ Regular:h14
   set cursorline
   set mouse=a
@@ -134,25 +142,25 @@ filetype off                  " required
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
 
 " Plugins
 Plugin 'flazz/vim-colorschemes'
-Plugin 'git@github.com:scrooloose/nerdtree.git'
-Plugin 'editorconfig/editorconfig-vim'
-Plugin 'wincent/command-t'
+Plugin 'scrooloose/nerdtree.git'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'jlanzarotta/bufexplorer'
+Plugin 'itmammoth/doorboy.vim'
 Plugin 'tpope/vim-fugitive'
 Plugin 'itchyny/lightline.vim'
 if has("gui_running")
-  Plugin 'git@github.com:Valloric/YouCompleteMe.git'
+  Plugin 'Valloric/YouCompleteMe.git'
 endif
-Plugin 'git@github.com:Valloric/MatchTagAlways.git'
-Plugin 'HerringtonDarkholme/yats'
-Plugin 'othree/yajs.vim'
+Plugin 'Valloric/MatchTagAlways.git'
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'editorconfig/editorconfig-vim'
+Plugin 'jelera/vim-javascript-syntax'
 
 call vundle#end()
 filetype plugin indent on
@@ -172,17 +180,23 @@ map <silent> ,v :call InsertConsoleLog()<CR>bbbbi
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 " Mapping to NERDTree
-nnoremap <C-n> :NERDTreeToggle<cr>
+nnoremap <c-n> :NERDTreeToggle<cr>
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 
 " Jump to HTML tag
 nnoremap <leader>% :MtaJumpToOtherTag<cr>
 
+" jsbeautify
+map <c-f> :call JsBeautify()<cr>
+
+" autoformat when save (jsbeautify)
+"au BufWritePost *.js :call JsBeautify()<cr>
+
 " =========== Status Bar =========="
 set laststatus=2
 set noshowmode
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'solarized',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
       \   'right': [ ['percent'], [ 'fileencoding', 'filetype' ] ]
@@ -194,8 +208,7 @@ let g:lightline = {
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
       \ },
-      \ 'separator': { 'left': "\ue0b0", 'right': "\ue0b2" },
-      \ 'subseparator': { 'left': "\ue0b1", 'right': "\ue0b3" }
+      \ 'subseparator': { 'left': '|', 'right': '|' }
       \ }
 
 function! LightlineModified()
@@ -203,7 +216,7 @@ function! LightlineModified()
 endfunction
 
 function! LightlineReadonly()
-  return &ft !~? 'help' && &readonly ? '' : ''
+  return &ft !~? 'help' && &readonly ? 'RO' : ''
 endfunction
 
 function! LightlineFilename()
@@ -221,7 +234,7 @@ endfunction
 function! LightlineFugitive()
   try
     if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-      let mark = ' '  " edit here for cool mark
+      let mark = ''  " edit here for cool mark
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
     endif
