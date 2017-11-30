@@ -103,7 +103,8 @@ augroup line_return
 augroup END
 
 " Switch to latest buffer opened
-map <D-*>  :b#<CR>
+map <D-*> :b#<CR>
+nnoremap <silent> <D-+> :BufExplorer<CR>
 
 " Syntax highlight for github .md files "
 au BufRead,BufNewFile *.md set filetype=markdown
@@ -151,16 +152,18 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'jlanzarotta/bufexplorer'
-Plugin 'itmammoth/doorboy.vim'
-Plugin 'tpope/vim-fugitive'
+Plugin 'itmammoth/doorboy.vim' " Autoclose brackets
+Plugin 'tpope/vim-fugitive' " Github
 Plugin 'itchyny/lightline.vim'
 if has("gui_running")
   Plugin 'Valloric/YouCompleteMe.git'
 endif
 Plugin 'Valloric/MatchTagAlways.git'
-Plugin 'maksimr/vim-jsbeautify'
+"Plugin 'maksimr/vim-jsbeautify'
 Plugin 'editorconfig/editorconfig-vim'
 Plugin 'jelera/vim-javascript-syntax'
+Plugin 'leafgarland/typescript-vim'
+Plugin 'Quramy/vim-js-pretty-template'
 
 call vundle#end()
 filetype plugin indent on
@@ -187,10 +190,17 @@ let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 nnoremap <leader>% :MtaJumpToOtherTag<cr>
 
 " jsbeautify
-map <c-f> :call JsBeautify()<cr>
+"map <c-f> :call JsBeautify()<cr>
 
 " autoformat when save (jsbeautify)
 "au BufWritePost *.js :call JsBeautify()<cr>
+
+if !exists("g:ycm_semantic_triggers")
+  let g:ycm_semantic_triggers = {}
+endif
+let g:ycm_semantic_triggers['typescript'] = ['.']
+
+autocmd FileType javascript JsPreTmpl html
 
 " =========== Status Bar =========="
 set laststatus=2
