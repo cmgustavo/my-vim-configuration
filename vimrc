@@ -5,7 +5,7 @@ syntax on
 
 " Keep more info in memory to speed things up
 set hidden
-set history=100
+set history=50
 
 " Have some logic when indenting
 filetype indent on
@@ -14,43 +14,43 @@ set tabstop=2
 set shiftwidth=2
 set softtabstop=2
 set expandtab
-set smartindent
-set autoindent
+"set smartindent
+"set autoindent
 
 " More Common Settings
-set encoding=utf-8
-set scrolloff=3
-set visualbell
-set ruler
-set ttyfast
+set encoding=utf8
+"set scrolloff=2
+"set visualbell
+"set ruler
+"set ttyfast
 set undofile
 set shell=/bin/bash
 set lazyredraw
 set matchtime=3
 set autoread
-set backspace=indent,eol,start
-set pastetoggle=<F3>
+"set backspace=indent,eol,start
+"set pastetoggle=<F3>
 
 " Line Number
-set relativenumber
-set number
-set norelativenumber
+"set relativenumber
+"set number
+"set norelativenumber
 
 " Better Search
-nnoremap / /\v
-vnoremap / /\v
+"nnoremap / /\v
+"vnoremap / /\v
 set hlsearch
 set ignorecase
 set incsearch
 set smartcase
-set gdefault
+"set gdefault
 if has("gui_running")
   " Cancel search with ESC
   nnoremap <silent> <Esc> :nohlsearch<Bar>:echo<CR>
 endif
-nnoremap <leader><space> :noh<cr>
-nnoremap <tab> %
-vnoremap <tab> %
+"nnoremap <leader><space> :noh<cr>
+"nnoremap <tab> %
+"vnoremap <tab> %
 
 " Show Matching Parenthesis
 set showmatch
@@ -68,10 +68,10 @@ set backupdir=/tmp
 nnoremap ; :
 
 " Make Vim to handle long lines nicely.
-set wrap
-set textwidth=120
-set formatoptions=qrn1
-set colorcolumn=120
+"set wrap
+"set textwidth=120
+"set formatoptions=qrn1
+"set colorcolumn=120
 
 " =========== END Basic Vim Settings ===========
 
@@ -116,7 +116,7 @@ au BufRead,BufNewFile *.md set filetype=markdown
 set background=dark
 if has("gui_running")
   colorscheme solarized
-  set guifont=Hack\ Regular:h14
+"  set guifont=Robotomono\ Nerd\ Font:h12
   set cursorline
   set mouse=a
   " Removing scrollbars
@@ -160,10 +160,14 @@ if has("gui_running")
 endif
 Plugin 'Valloric/MatchTagAlways.git'
 "Plugin 'maksimr/vim-jsbeautify'
-Plugin 'editorconfig/editorconfig-vim'
+"Plugin 'editorconfig/editorconfig-vim'
+Plugin 'majutsushi/tagbar'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'leafgarland/typescript-vim'
-Plugin 'Quramy/vim-js-pretty-template'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'prettier/vim-prettier', {
+  \ 'do': 'npm install',
+  \ 'for': ['javascript', 'typescript', 'css', 'scss', 'json', 'markdown'] }
 
 call vundle#end()
 filetype plugin indent on
@@ -174,17 +178,13 @@ filetype plugin indent on
 function! InsertConsoleLog()
   let word = expand("<cword>")
   let linenumber = line(".")
-  execute "normal A \<BS>\<CR>\<ESC>0Aconsole.log('[" . expand('%:t'). ":" .linenumber. "]',".word."); //TODO"
+  execute "normal A \<BS>\<CR>\<ESC>0Aconsole.log('[" . expand('%:t'). ":" .linenumber. "]',".word."); \/* TODO *\/"
 endfunction
 
 map <silent> ,v :call InsertConsoleLog()<CR>bbbbi
 
 " Fix for fugitive and editorconfig
-let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
-
-" Mapping to NERDTree
-nnoremap <c-n> :NERDTreeToggle<cr>
-let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
+"let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
 
 " Jump to HTML tag
 nnoremap <leader>% :MtaJumpToOtherTag<cr>
@@ -195,12 +195,50 @@ nnoremap <leader>% :MtaJumpToOtherTag<cr>
 " autoformat when save (jsbeautify)
 "au BufWritePost *.js :call JsBeautify()<cr>
 
+" YouCompleteMe
 if !exists("g:ycm_semantic_triggers")
   let g:ycm_semantic_triggers = {}
 endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 
-autocmd FileType javascript JsPreTmpl html
+" Autoclose brackers
+let g:doorboy_nomap_quotations = { 'javascript': ['/'] }
+let g:doorboy_additional_brackets = { 'html': ['<>'] }
+
+" find files and populate the quickfix list
+fun! FindFiles(filename)
+  let error_file = tempname()
+  silent exe '!find . -name "'.a:filename.'" | xargs file | sed "s/:/:1:/" > '.error_file
+  set errorformat=%f:%l:%m
+  exe "cfile ". error_file
+  copen
+  call delete(error_file)
+endfun
+command! -nargs=1 FindFile call FindFiles(<q-args>)
+
+" Start nerdtree
+"autocmd vimenter * NERDTree
+" Mapping to NERDTree
+nnoremap <c-n> :NERDTreeToggle<cr>
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
+
+" ctrl-p
+set runtimepath^=~/.vim/bundle/ctrlp.vim
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links',
+  \ }
+" Custom file listing command
+let g:ctrlp_user_command = 'find %s -type f'
+" Ignore gitignore
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+
+" Tagbar
+nmap <leader>t :TagbarToggle<CR>
+
 
 " =========== Status Bar =========="
 set laststatus=2
@@ -209,16 +247,19 @@ let g:lightline = {
       \ 'colorscheme': 'solarized',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-      \   'right': [ ['percent'], [ 'fileencoding', 'filetype' ] ]
+      \   'right': [ ['percent'], [ 'fileencoding', 'filetype', 'lineinfo' ] ]
       \ },
       \ 'component_function': {
+      \   'percent': 'MyLightLinePercent',
+      \   'lineinfo': 'MyLightLineLineInfo',
       \   'fugitive': 'LightlineFugitive',
       \   'filename': 'LightlineFilename',
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
       \ },
-      \ 'subseparator': { 'left': '|', 'right': '|' }
+      \ 'separator': { 'left': '', 'right': '' },
+      \ 'subseparator': { 'left': '', 'right': '' }
       \ }
 
 function! LightlineModified()
@@ -244,7 +285,7 @@ endfunction
 function! LightlineFugitive()
   try
     if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-      let mark = ''  " edit here for cool mark
+      let mark = ''  " edit here for cool mark
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
     endif
@@ -271,4 +312,20 @@ function! LightlineMode()
         \ &ft == 'vimfiler' ? 'VimFiler' :
         \ &ft == 'vimshell' ? 'VimShell' :
         \ winwidth(0) > 60 ? lightline#mode() : ''
+endfunction
+
+function! MyLightLinePercent()
+  if &ft !=? 'nerdtree'
+    return line('.') * 100 / line('$') . '%'
+  else
+    return ''
+  endif
+endfunction
+
+function! MyLightLineLineInfo()
+  if &ft !=? 'nerdtree'
+    return ' '.line('.').':'. col('.')
+  else
+    return ''
+  endif
 endfunction
