@@ -32,22 +32,22 @@ That's all folks.
 
 ## Plugins
 
-* _'flazz/vim-colorschemes'
-* _'scrooloose/nerdtree.git'
-* _'scrooloose/nerdcommenter'
-* _'jlanzarotta/bufexplorer'
-* _'itmammoth/doorboy.vim'
-* _'tpope/vim-fugitive'
-* _'itchyny/lightline.vim'
-* _'Valloric/YouCompleteMe.git'
-* _'Valloric/MatchTagAlways.git'
-* _'majutsushi/tagbar'
-* _'jelera/vim-javascript-syntax'
-* _'leafgarland/typescript-vim'
-* _'ctrlpvim/ctrlp.vim'
-* _'prettier/vim-prettier'
-* _'ervandew/supertab'
-* _'yegappan/mru'
+* _flazz/vim-colorschemes
+* _scrooloose/nerdtree.git
+* _scrooloose/nerdcommenter
+* _jlanzarotta/bufexplorer
+* _itmammoth/doorboy.vim
+* _tpope/vim-fugitive
+* _itchyny/lightline.vim
+* _Valloric/YouCompleteMe.git
+* _Valloric/MatchTagAlways.git
+* _majutsushi/tagbar
+* _jelera/vim-javascript-syntax
+* _leafgarland/typescript-vim
+* _ctrlpvim/ctrlp.vim
+* _prettier/vim-prettier
+* _ervandew/supertab
+* _yegappan/mru
 
 # GNU GENERAL PUBLIC LICENSE
 Version 3, 29 June 2007
