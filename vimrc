@@ -10,20 +10,23 @@ set history=50
 " Add a bit extra margin to the left
 "set foldcolumn=1
 
+" No newline at the end of file
+set nofixendofline
+
 " Have some logic when indenting
 filetype indent on
 set tabstop=2
 set shiftwidth=2
 set softtabstop=2
 set expandtab
-"set nowrap
-"set smartindent
-"set autoindent
+set nowrap
+set smartindent
+set autoindent
 
 " More Common Settings
 set encoding=utf8
-"set scrolloff=2
-"set ttyfast
+set scrolloff=2
+set ttyfast
 set ruler
 set undofile
 set shell=/bin/bash
@@ -84,10 +87,10 @@ set backupdir=/tmp
 nnoremap ; :
 
 " Make Vim to handle long lines nicely.
-"set wrap
-"set textwidth=120
-"set formatoptions=qrn1
-"set colorcolumn=120
+set wrap
+set textwidth=120
+set formatoptions=qrn1
+set colorcolumn=120
 
 " When editing a text file, if you want word wrapping, but only want line breaks inserted when you explicitly press the Enter key
 set wrap
@@ -177,8 +180,8 @@ endif
 set ffs=unix,dos,mac
 
 " Set font according to system
-if has("mac") || has("macunix")
-  set gfn=IBM\ Plex\ Mono:h14,Hack:h14,Source\ Code\ Pro:h15,Menlo:h15
+if has("gui_running") && (has("mac") || has("macunix"))
+  set gfn=IBM\ Plex\ Mono:h12,Hack:h12,Source\ Code\ Pro:h13,Menlo:h13
 elseif has("unix")
   set gfn=Monospace\ 11
 endif
@@ -207,9 +210,6 @@ Plugin 'tpope/vim-fugitive' " Github
 Plugin 'itchyny/lightline.vim'
 Plugin 'Valloric/YouCompleteMe.git'
 Plugin 'Valloric/MatchTagAlways.git'
-"Plugin 'maksimr/vim-jsbeautify'
-"Plugin 'editorconfig/editorconfig-vim'
-Plugin 'majutsushi/tagbar'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'ctrlpvim/ctrlp.vim'
@@ -219,6 +219,7 @@ Plugin 'prettier/vim-prettier', {
 
 Plugin 'ervandew/supertab'
 Plugin 'yegappan/mru'
+Plugin 'sjl/gundo.vim'
 
 " ====== Snippet ===== "
 " Track the engine.
@@ -253,7 +254,7 @@ nnoremap <leader>% :MtaJumpToOtherTag<cr>
 "au BufWritePost *.js :call JsBeautify()<cr>
 
 " MRU plugin
-let MRU_Max_Entries = 400
+let MRU_Max_Entries = 50
 map <leader>f :MRU<CR>
 
 " YouCompleteMe
@@ -290,9 +291,13 @@ endfun
 command! -nargs=1 FindFile call FindFiles(<q-args>)
 
 " Start nerdtree
-"autocmd vimenter * NERDTree
+if has("gui_running")
+  autocmd vimenter * NERDTree
+  autocmd VimEnter * wincmd p
+endif
 " Mapping to NERDTree
 map <leader>nn :NERDTreeToggle<cr>
+let NERDTreeShowBookmarks=1
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 let g:NERDTreeWinPos = 'left'
 let g:NERDTreeWinSize = 35
@@ -306,9 +311,11 @@ let g:ctrlp_user_command = 'find %s -type f'
 " Ignore gitignore
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
-" Tagbar
-nmap <leader>t :TagbarToggle<CR>
-
+" GUNDO
+nnoremap <leader>- :GundoToggle<CR>
+let g:gundo_width = 35
+let g:gundo_preview_height = 40
+let g:gundo_right = 1
 
 " =========== Status Bar =========="
 set laststatus=2
@@ -342,8 +349,7 @@ endfunction
 
 function! LightlineFilename()
   let fname = expand('%:t')
-  return fname == '__Tagbar__' ? g:lightline.fname :
-        \ fname =~ '__Gundo\|NERD_tree' ? '' :
+  return fname =~ '__Gundo\|NERD_tree' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
         \ &ft == 'vimshell' ? vimshell#get_status_string() :
@@ -354,7 +360,7 @@ endfunction
 
 function! LightlineFugitive()
   try
-    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+    if expand('%:t') !~? 'Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
       let mark = '@'  " edit here for cool mark
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
@@ -374,8 +380,7 @@ endfunction
 
 function! LightlineMode()
   let fname = expand('%:t')
-  return fname == '__Tagbar__' ? 'Tagbar' :
-        \ fname == '__Gundo__' ? 'Gundo' :
+  return fname == '__Gundo__' ? 'Gundo' :
         \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
         \ fname =~ 'NERD_tree' ? 'NERDTree' :
         \ &ft == 'unite' ? 'Unite' :
