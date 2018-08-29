@@ -263,9 +263,6 @@ if !exists("g:ycm_semantic_triggers")
 endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 
-" Typescript
-let g:typescript_indent_disable = 1
-
 " YouCompleteMe and UltiSnips compatibility, with the helper of supertab
 let g:SuperTabDefaultCompletionType    = '<C-n>'
 let g:SuperTabCrMapping                = 0
