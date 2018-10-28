@@ -317,6 +317,11 @@ let g:gundo_width = 35
 let g:gundo_preview_height = 40
 let g:gundo_right = 1
 
+" Typescript
+let g:typescript_indent_disable = 1
+autocmd QuickFixCmdPost [^l]* nested cwindow
+autocmd QuickFixCmdPost    l* nested lwindow
+
 " =========== Status Bar =========="
 set laststatus=2
 set noshowmode
