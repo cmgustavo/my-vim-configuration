@@ -158,8 +158,8 @@ map <c-space> ?
 
 " =========== Gvim Settings =============
 
-set background=dark
 if has("gui_running")
+  set background=light
   colorscheme solarized
   set cursorline
   set mouse=a
@@ -300,7 +300,7 @@ map <leader>nn :NERDTreeToggle<cr>
 let NERDTreeShowBookmarks=1
 let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
 let g:NERDTreeWinPos = 'left'
-let g:NERDTreeWinSize = 35
+let g:NERDTreeWinSize = 30
 
 " ctrl-p
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -313,14 +313,14 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 
 " GUNDO
 nnoremap <leader>- :GundoToggle<CR>
-let g:gundo_width = 35
+let g:gundo_width = 45
 let g:gundo_preview_height = 40
 let g:gundo_right = 1
 
 " Typescript
-let g:typescript_indent_disable = 1
-autocmd QuickFixCmdPost [^l]* nested cwindow
-autocmd QuickFixCmdPost    l* nested lwindow
+"let g:typescript_indent_disable = 1
+"autocmd QuickFixCmdPost [^l]* nested cwindow
+"autocmd QuickFixCmdPost    l* nested lwindow
 
 " =========== Status Bar =========="
 set laststatus=2
