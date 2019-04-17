@@ -220,6 +220,7 @@ Plugin 'prettier/vim-prettier', {
 Plugin 'ervandew/supertab'
 Plugin 'yegappan/mru'
 Plugin 'sjl/gundo.vim'
+Plugin 'bumaociyuan/vim-swift'
 
 " ====== Snippet ===== "
 " Track the engine.
