@@ -8,7 +8,7 @@ set hidden
 set history=50
 
 " Add a bit extra margin to the left
-"set foldcolumn=1
+set foldcolumn=1
 
 " No newline at the end of file
 set nofixendofline
@@ -88,9 +88,9 @@ nnoremap ; :
 
 " Make Vim to handle long lines nicely.
 set wrap
-set textwidth=120
-set formatoptions=qrn1
-set colorcolumn=120
+"set textwidth=120
+"set formatoptions=qrn1
+"set colorcolumn=120
 
 " When editing a text file, if you want word wrapping, but only want line breaks inserted when you explicitly press the Enter key
 set wrap
@@ -132,6 +132,8 @@ set wildignore+=*/coverage "Javascript"
 set wildignore+=*/desktop "NW.js"
 set wildignore+=*/cache "NW.js"
 set wildignore+=*/resources "Copay"
+set wildignore+=*/www "Copay"
+set wildignore+=*/dist "Copay"
 set wildignore+=*/tmp/*,*.so,*.zip
 
 " Make Sure that Vim returns to the same line when we reopen a file"
@@ -159,8 +161,8 @@ map <c-space> ?
 " =========== Gvim Settings =============
 
 if has("gui_running")
-  set background=light
-  colorscheme solarized
+  set background=dark
+  colorscheme gruvbox
   set cursorline
   set mouse=a
   " Removing scrollbars
@@ -181,7 +183,7 @@ set ffs=unix,dos,mac
 
 " Set font according to system
 if has("gui_running") && (has("mac") || has("macunix"))
-  set gfn=IBM\ Plex\ Mono:h12,Hack:h12,Source\ Code\ Pro:h13,Menlo:h13
+  set gfn=Hack:h13,Source\ Code\ Pro:h13,Menlo:h13
 elseif has("unix")
   set gfn=Monospace\ 11
 endif
@@ -212,6 +214,7 @@ Plugin 'Valloric/YouCompleteMe.git'
 Plugin 'Valloric/MatchTagAlways.git'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'leafgarland/typescript-vim'
+Plugin 'Quramy/tsuquyomi'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'prettier/vim-prettier', {
   \ 'do': 'npm install',
@@ -219,7 +222,7 @@ Plugin 'prettier/vim-prettier', {
 
 Plugin 'ervandew/supertab'
 Plugin 'yegappan/mru'
-Plugin 'sjl/gundo.vim'
+Plugin 'mbbill/undotree'
 Plugin 'bumaociyuan/vim-swift'
 
 " ====== Snippet ===== "
@@ -293,8 +296,8 @@ command! -nargs=1 FindFile call FindFiles(<q-args>)
 
 " Start nerdtree
 if has("gui_running")
-  autocmd vimenter * NERDTree
-  autocmd VimEnter * wincmd p
+"  autocmd vimenter * NERDTree
+"  autocmd VimEnter * wincmd p
 endif
 " Mapping to NERDTree
 map <leader>nn :NERDTreeToggle<cr>
@@ -312,22 +315,35 @@ let g:ctrlp_user_command = 'find %s -type f'
 " Ignore gitignore
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
-" GUNDO
-nnoremap <leader>- :GundoToggle<CR>
-let g:gundo_width = 45
-let g:gundo_preview_height = 40
-let g:gundo_right = 1
+" UndoTree
+nnoremap <leader>- :UndotreeToggle<CR>
+if !exists('g:undotree_WindowLayout')
+  let g:undotree_WindowLayout = 1
+endif
+"let g:gundo_width = 45
+"let g:gundo_preview_height = 40
+"let g:gundo_right = 1
+
 
 " Typescript
 "let g:typescript_indent_disable = 1
 "autocmd QuickFixCmdPost [^l]* nested cwindow
 "autocmd QuickFixCmdPost    l* nested lwindow
+autocmd FileType typescript setlocal completeopt-=menu
+"let g:tsuquyomi_completion_detail = 1
+"if has("gui_running")
+"  set ballooneval
+"  autocmd FileType typescript setlocal balloonexpr=tsuquyomi#balloonexpr()
+"else
+"  autocmd FileType typescript nmap <buffer> <Leader>t : <C-u>echo tsuquyomi#hint()<CR>
+"endif
+
 
 " =========== Status Bar =========="
 set laststatus=2
 set noshowmode
 let g:lightline = {
-      \ 'colorscheme': 'solarized',
+      \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
       \   'right': [ ['percent'], [ 'fileencoding', 'filetype', 'lineinfo' ] ]
@@ -355,7 +371,7 @@ endfunction
 
 function! LightlineFilename()
   let fname = expand('%:t')
-  return fname =~ '__Gundo\|NERD_tree' ? '' :
+  return fname =~ 'NERD_tree' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
         \ &ft == 'vimshell' ? vimshell#get_status_string() :
@@ -366,7 +382,7 @@ endfunction
 
 function! LightlineFugitive()
   try
-    if expand('%:t') !~? 'Gundo\|NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+    if expand('%:t') !~? 'NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
       let mark = '@'  " edit here for cool mark
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
@@ -386,9 +402,7 @@ endfunction
 
 function! LightlineMode()
   let fname = expand('%:t')
-  return fname == '__Gundo__' ? 'Gundo' :
-        \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
-        \ fname =~ 'NERD_tree' ? 'NERDTree' :
+  return fname =~ 'NERD_tree' ? 'NERDTree' :
         \ &ft == 'unite' ? 'Unite' :
         \ &ft == 'vimfiler' ? 'VimFiler' :
         \ &ft == 'vimshell' ? 'VimShell' :
