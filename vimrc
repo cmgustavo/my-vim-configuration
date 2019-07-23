@@ -15,13 +15,14 @@ set nofixendofline
 
 " Have some logic when indenting
 filetype indent on
-set tabstop=2
+"set tabstop=2
 set shiftwidth=2
 set softtabstop=2
 set expandtab
-set nowrap
+"set nowrap
 set smartindent
 set autoindent
+set cindent
 
 " More Common Settings
 set encoding=utf8
@@ -183,7 +184,7 @@ set ffs=unix,dos,mac
 
 " Set font according to system
 if has("gui_running") && (has("mac") || has("macunix"))
-  set gfn=Hack:h13,Source\ Code\ Pro:h13,Menlo:h13
+  set gfn=Monaco:h14,Hack:h14,Consolas:h14,Source\ Code\ Pro:h13,Menlo:h14
 elseif has("unix")
   set gfn=Monospace\ 11
 endif
@@ -207,8 +208,8 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'jlanzarotta/bufexplorer'
-Plugin 'itmammoth/doorboy.vim' " Autoclose brackets
-Plugin 'tpope/vim-fugitive' " Github
+Plugin 'jiangmiao/auto-pairs'
+Plugin 'tpope/vim-fugitive' " Git
 Plugin 'itchyny/lightline.vim'
 Plugin 'Valloric/YouCompleteMe.git'
 Plugin 'Valloric/MatchTagAlways.git'
@@ -220,10 +221,10 @@ Plugin 'prettier/vim-prettier', {
   \ 'do': 'npm install',
   \ 'for': ['javascript', 'typescript', 'css', 'scss', 'json', 'markdown'] }
 
-Plugin 'ervandew/supertab'
 Plugin 'yegappan/mru'
 Plugin 'mbbill/undotree'
 Plugin 'bumaociyuan/vim-swift'
+Plugin 'cakebaker/scss-syntax.vim'
 
 " ====== Snippet ===== "
 " Track the engine.
@@ -267,14 +268,12 @@ if !exists("g:ycm_semantic_triggers")
 endif
 let g:ycm_semantic_triggers['typescript'] = ['.']
 
-" YouCompleteMe and UltiSnips compatibility, with the helper of supertab
-let g:SuperTabDefaultCompletionType    = '<C-n>'
-let g:SuperTabCrMapping                = 0
+" YouCompleteMe and UltiSnips compatibility
 let g:UltiSnipsExpandTrigger           = '<tab>'
-let g:UltiSnipsJumpForwardTrigger      = '<tab>'
-let g:UltiSnipsJumpBackwardTrigger     = '<s-tab>'
-let g:ycm_key_list_select_completion   = ['<C-j>', '<C-n>', '<Down>']
-let g:ycm_key_list_previous_completion = ['<C-k>', '<C-p>', '<Up>']
+let g:UltiSnipsJumpForwardTrigger      = '<C-n>'
+let g:UltiSnipsJumpBackwardTrigger     = '<C-m>'
+let g:ycm_key_list_select_completion   = ['<C-j>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
 
 " Remove new windows auto preview for YouCompleteMe
 set completeopt-=preview
@@ -382,7 +381,7 @@ endfunction
 
 function! LightlineFugitive()
   try
-    if expand('%:t') !~? 'NERD' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+    if expand('%:t') !~? 'Fugitive' && &ft !~? 'vimfiler' && exists('*fugitive#head')
       let mark = '@'  " edit here for cool mark
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
