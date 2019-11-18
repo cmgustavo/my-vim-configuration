@@ -8,7 +8,7 @@ set hidden
 set history=50
 
 " Add a bit extra margin to the left
-set foldcolumn=1
+"set foldcolumn=1
 
 " No newline at the end of file
 set nofixendofline
@@ -184,7 +184,7 @@ set ffs=unix,dos,mac
 
 " Set font according to system
 if has("gui_running") && (has("mac") || has("macunix"))
-  set gfn=Monaco:h14,Hack:h14,Consolas:h14,Source\ Code\ Pro:h13,Menlo:h14
+  set gfn=Menlo:h12,Consolas:h14,Source\ Code\ Pro:h13,Hack:h14
 elseif has("unix")
   set gfn=Monospace\ 11
 endif
@@ -211,20 +211,21 @@ Plugin 'jlanzarotta/bufexplorer'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'tpope/vim-fugitive' " Git
 Plugin 'itchyny/lightline.vim'
-Plugin 'Valloric/YouCompleteMe.git'
+Plugin 'ycm-core/YouCompleteMe.git'
 Plugin 'Valloric/MatchTagAlways.git'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'leafgarland/typescript-vim'
-Plugin 'Quramy/tsuquyomi'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'prettier/vim-prettier', {
   \ 'do': 'npm install',
-  \ 'for': ['javascript', 'typescript', 'css', 'scss', 'json', 'markdown'] }
+  \ 'for': ['javascript', 'typescript', 'css', 'scss'] }
 
 Plugin 'yegappan/mru'
 Plugin 'mbbill/undotree'
 Plugin 'bumaociyuan/vim-swift'
 Plugin 'cakebaker/scss-syntax.vim'
+"Plugin 'vim-syntastic/syntastic'
+Plugin 'dense-analysis/ale'
 
 " ====== Snippet ===== "
 " Track the engine.
@@ -263,10 +264,10 @@ let MRU_Max_Entries = 50
 map <leader>f :MRU<CR>
 
 " YouCompleteMe
-if !exists("g:ycm_semantic_triggers")
-  let g:ycm_semantic_triggers = {}
-endif
-let g:ycm_semantic_triggers['typescript'] = ['.']
+"if !exists("g:ycm_semantic_triggers")
+  "let g:ycm_semantic_triggers = {}
+"endif
+"let g:ycm_semantic_triggers['typescript'] = ['.']
 
 " YouCompleteMe and UltiSnips compatibility
 let g:UltiSnipsExpandTrigger           = '<tab>'
@@ -325,10 +326,10 @@ endif
 
 
 " Typescript
-"let g:typescript_indent_disable = 1
+let g:typescript_indent_disable = 1
 "autocmd QuickFixCmdPost [^l]* nested cwindow
 "autocmd QuickFixCmdPost    l* nested lwindow
-autocmd FileType typescript setlocal completeopt-=menu
+"autocmd FileType typescript setlocal completeopt-=menu
 "let g:tsuquyomi_completion_detail = 1
 "if has("gui_running")
 "  set ballooneval
@@ -336,16 +337,42 @@ autocmd FileType typescript setlocal completeopt-=menu
 "else
 "  autocmd FileType typescript nmap <buffer> <Leader>t : <C-u>echo tsuquyomi#hint()<CR>
 "endif
+"let g:tsuquyomi_disable_quickfix = 1
+"let g:syntastic_typescript_checkers = ['tsuquyomi'] " You shouldn't use 'tsc' checker.
+"let g:tsuquyomi_tsserver_path = '/Users/gustavo/.npm-global/bin'
 
 
-" =========== Status Bar =========="
+" Syntastic initial configuration
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+
+" Plugin auto-pairs
+let g:AutoPairsFlyMode = 1
+"let g:AutoPairsShortcutBackInsert = '<M-b>'
+
+" ALE
+let g:ale_completion_enabled = 1
+let g:ale_completion_tsserver_autoimport = 1
+"let g:ale_sign_column_always = 1
+"let g:ale_sign_error = '>>'
+"let g:ale_sign_warning = '--'
+nnoremap <leader>aa :ALEGoToDefinition<CR>
+nnoremap <leader>av :ALEGoToDefinitionInVSplit<CR>
+
+"=========== Status Bar =========="
 set laststatus=2
 set noshowmode
 let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ] ],
-      \   'right': [ ['percent'], [ 'fileencoding', 'filetype', 'lineinfo' ] ]
+      \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
+      \   'right': [ [ 'linter' ], [ 'lineinfo' ], ['percent'] ]
       \ },
       \ 'component_function': {
       \   'percent': 'MyLightLinePercent',
@@ -355,22 +382,38 @@ let g:lightline = {
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
+      \   'ctrlpmark': 'CtrlPMark',
+      \   'linter': 'LinterStatus'
       \ },
-      \ 'separator': { 'left': '', 'right': '' },
-      \ 'subseparator': { 'left': '', 'right': '' }
+      \ 'separator': { 'left': '⮀', 'right': '' },
+      \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
       \ }
+" \ 'separator': { 'left': '⮀', 'right': '⮂' },
+
+function! LinterStatus() abort
+  let l:counts = ale#statusline#Count(bufnr(''))
+
+  let l:all_errors = l:counts.error + l:counts.style_error
+  let l:all_non_errors = l:counts.total - l:all_errors
+
+  return l:counts.total == 0 ? 'OK' : printf(
+        \   '%dW %dE',
+        \   all_non_errors,
+        \   all_errors
+        \)
+endfunction
 
 function! LightlineModified()
-  return &ft =~ 'help' ? '' : &modified ? '+' : &modifiable ? '' : '-'
+  return &ft =~ 'help\|vimfiler' ? '' : &modified ? '+' : &modifiable ? '' : '-'
 endfunction
-
 function! LightlineReadonly()
-  return &ft !~? 'help' && &readonly ? 'ro' : ''
+  return &ft !~? 'help\|vimfiler' && &readonly ? '⭤' : ''
 endfunction
-
 function! LightlineFilename()
   let fname = expand('%:t')
-  return fname =~ 'NERD_tree' ? '' :
+  return fname == 'ControlP' && has_key(g:lightline, 'ctrlp_item') ? g:lightline.ctrlp_item :
+        \ fname == '__Tagbar__' ? g:lightline.fname :
+        \ fname =~ '__Gundo\|NERD_tree\|__MRU_Files__\|diffpanel_3\|undotree_2' ? '' :
         \ &ft == 'vimfiler' ? vimfiler#get_status_string() :
         \ &ft == 'unite' ? unite#get_status_string() :
         \ &ft == 'vimshell' ? vimshell#get_status_string() :
@@ -381,14 +424,18 @@ endfunction
 
 function! LightlineFugitive()
   try
-    if expand('%:t') !~? 'Fugitive' && &ft !~? 'vimfiler' && exists('*fugitive#head')
-      let mark = '@'  " edit here for cool mark
+    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD\|MRU\|Diff\|UndoTree' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+      let mark = '⭠ '
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
     endif
   catch
   endtry
   return ''
+endfunction
+
+function! LightlineFileformat()
+  return winwidth(0) > 70 ? &fileformat : ''
 endfunction
 
 function! LightlineFiletype()
@@ -401,7 +448,14 @@ endfunction
 
 function! LightlineMode()
   let fname = expand('%:t')
-  return fname =~ 'NERD_tree' ? 'NERDTree' :
+  return fname == '__Tagbar__' ? 'Tagbar' :
+        \ fname == 'ControlP' ? 'CtrlP' :
+        \ fname == '__Gundo__' ? 'Gundo' :
+        \ fname == '__Gundo_Preview__' ? 'Gundo Preview' :
+        \ fname =~ 'NERD_tree' ? 'NERDTree' :
+        \ fname =~ '__MRU_Files__' ? 'MRU' :
+        \ fname =~ 'diffpanel_3' ? 'Diff' :
+        \ fname =~ 'undotree_2' ? 'UndoTree' :
         \ &ft == 'unite' ? 'Unite' :
         \ &ft == 'vimfiler' ? 'VimFiler' :
         \ &ft == 'vimshell' ? 'VimShell' :
@@ -423,3 +477,41 @@ function! MyLightLineLineInfo()
     return ''
   endif
 endfunction
+
+function! CtrlPMark()
+  if expand('%:t') =~ 'ControlP' && has_key(g:lightline, 'ctrlp_item')
+    call lightline#link('iR'[g:lightline.ctrlp_regex])
+    return lightline#concatenate([g:lightline.ctrlp_prev, g:lightline.ctrlp_item
+          \ , g:lightline.ctrlp_next], 0)
+  else
+    return ''
+  endif
+endfunction
+
+let g:ctrlp_status_func = {
+      \ 'main': 'CtrlPStatusFunc_1',
+      \ 'prog': 'CtrlPStatusFunc_2',
+      \ }
+
+function! CtrlPStatusFunc_1(focus, byfname, regex, prev, item, next, marked)
+  let g:lightline.ctrlp_regex = a:regex
+  let g:lightline.ctrlp_prev = a:prev
+  let g:lightline.ctrlp_item = a:item
+  let g:lightline.ctrlp_next = a:next
+  return lightline#statusline(0)
+endfunction
+
+function! CtrlPStatusFunc_2(str)
+  return lightline#statusline(0)
+endfunction
+
+let g:tagbar_status_func = 'TagbarStatusFunc'
+
+function! TagbarStatusFunc(current, sort, fname, ...) abort
+  let g:lightline.fname = a:fname
+  return lightline#statusline(0)
+endfunction
+
+let g:unite_force_overwrite_statusline = 0
+let g:vimfiler_force_overwrite_statusline = 0
+let g:vimshell_force_overwrite_statusline = 0
