@@ -280,7 +280,7 @@ let g:ycm_key_list_previous_completion = ['<C-k>', '<Up>']
 set completeopt-=preview
 
 " Autoclose brackers
-let g:doorboy_nomap_quotations = { 'javascript': ['/'] }
+"let g:doorboy_nomap_quotations = { 'javascript': ['/'] }
 let g:doorboy_additional_brackets = { 'html': ['<>'] }
 
 " find files and populate the quickfix list
@@ -353,15 +353,22 @@ let g:typescript_indent_disable = 1
 "let g:syntastic_check_on_wq = 0
 
 " Plugin auto-pairs
-let g:AutoPairsFlyMode = 1
+"let g:AutoPairsFlyMode = 1
 "let g:AutoPairsShortcutBackInsert = '<M-b>'
 
 " ALE
-let g:ale_completion_enabled = 1
+"let g:ale_completion_enabled = 1
 let g:ale_completion_tsserver_autoimport = 1
 "let g:ale_sign_column_always = 1
 "let g:ale_sign_error = '>>'
 "let g:ale_sign_warning = '--'
+"let g:ale_fixers = ['prettier', 'eslint']
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'javascript': ['eslint', 'prettier'],
+\   'typescript': ['prettier'],
+\}
+let g:ale_fix_on_save = 1
 nnoremap <leader>aa :ALEGoToDefinition<CR>
 nnoremap <leader>av :ALEGoToDefinitionInVSplit<CR>
 
