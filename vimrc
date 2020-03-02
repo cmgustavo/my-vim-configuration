@@ -25,7 +25,8 @@ set autoindent
 set cindent
 
 " More Common Settings
-set encoding=utf8
+"set encoding=utf8
+set encoding=UTF-8
 set scrolloff=2
 set ttyfast
 set ruler
@@ -184,7 +185,8 @@ set ffs=unix,dos,mac
 
 " Set font according to system
 if has("gui_running") && (has("mac") || has("macunix"))
-  set gfn=Menlo:h12,Consolas:h14,Source\ Code\ Pro:h13,Hack:h14
+"  set gfn=Mononoki:h12,Menlo:h12,Consolas:h14,Source\ Code\ Pro:h13,Hack:h14
+  set gfn=Hack\ Nerd\ Font:h14
 elseif has("unix")
   set gfn=Monospace\ 11
 endif
@@ -226,6 +228,9 @@ Plugin 'bumaociyuan/vim-swift'
 Plugin 'cakebaker/scss-syntax.vim'
 "Plugin 'vim-syntastic/syntastic'
 Plugin 'dense-analysis/ale'
+
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'ryanoasis/vim-devicons'
 
 " ====== Snippet ===== "
 " Track the engine.
