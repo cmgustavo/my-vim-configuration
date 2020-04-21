@@ -212,6 +212,7 @@ Plugin 'scrooloose/nerdcommenter'
 Plugin 'jlanzarotta/bufexplorer'
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'tpope/vim-fugitive' " Git
+Plugin 'junegunn/gv.vim' " Show commits
 Plugin 'itchyny/lightline.vim'
 Plugin 'ycm-core/YouCompleteMe.git'
 Plugin 'Valloric/MatchTagAlways.git'
@@ -229,8 +230,10 @@ Plugin 'cakebaker/scss-syntax.vim'
 "Plugin 'vim-syntastic/syntastic'
 Plugin 'dense-analysis/ale'
 
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-Plugin 'ryanoasis/vim-devicons'
+"Plugin 'Xuyuanp/nerdtree-git-plugin'
+"Plugin 'ryanoasis/vim-devicons'
+
+Plugin 'vimwiki/vimwiki'
 
 " ====== Snippet ===== "
 " Track the engine.
@@ -360,6 +363,9 @@ let g:typescript_indent_disable = 1
 " Plugin auto-pairs
 "let g:AutoPairsFlyMode = 1
 "let g:AutoPairsShortcutBackInsert = '<M-b>'
+"au Filetype typescript let b:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
+au Filetype html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->', '<' : '>'})
+"let g:AutoPairs['<']='>'
 
 " ALE
 "let g:ale_completion_enabled = 1
@@ -377,6 +383,26 @@ let g:ale_fix_on_save = 1
 nnoremap <leader>aa :ALEGoToDefinition<CR>
 nnoremap <leader>av :ALEGoToDefinitionInVSplit<CR>
 
+" Adds current datetime
+:nnoremap <F5> "=strftime("%a %d %b %Y")<CR>P
+:inoremap <F5> <C-R>=strftime("%a %d %b %Y")<CR>
+
+" Fugitive
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit<CR>
+nnoremap <leader>gC :Gcommit -n<CR> " commit but ignore hooks
+nnoremap <leader>gP :Gpush<CR>
+nnoremap <leader>gfP :Gpush --force-with-lease<CR>
+nnoremap <leader>gp :Gpull<CR>
+nnoremap <leader>gf :Gfetch<CR>
+nnoremap <leader>gl :GV!<CR> " Git log for the current file
+nnoremap <leader>gL :GV<CR> " Full git log
+nnoremap <leader>gd :Gvdiff<CR>
+nnoremap <leader>gb :Gblame<CR>
+nnoremap <leader>gm :Git checkout master<CR>
+nnoremap <leader>g- :Git checkout -<CR>
+nnoremap <leader>grm :Grebase -i master<CR>
+
 "=========== Status Bar =========="
 set laststatus=2
 set noshowmode
@@ -384,12 +410,12 @@ let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
-      \   'right': [ [ 'linter' ], [ 'lineinfo' ], ['percent'] ]
+      \   'right': [ [ 'linter' ], [ 'lineinfo', 'percent'], [ 'filetype', 'fileencoding' ] ]
       \ },
       \ 'component_function': {
       \   'percent': 'MyLightLinePercent',
       \   'lineinfo': 'MyLightLineLineInfo',
-      \   'fugitive': 'LightlineFugitive',
+      \   'fugitive': 'FugitiveHead',
       \   'filename': 'LightlineFilename',
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
@@ -398,9 +424,10 @@ let g:lightline = {
       \   'linter': 'LinterStatus'
       \ },
       \ 'separator': { 'left': '⮀', 'right': '' },
-      \ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+      \ 'subseparator': { 'left': '⮁', 'right': '' }
       \ }
 " \ 'separator': { 'left': '⮀', 'right': '⮂' },
+"\ 'subseparator': { 'left': '⮁', 'right': '⮃' }
 
 function! LinterStatus() abort
   let l:counts = ale#statusline#Count(bufnr(''))
@@ -436,7 +463,7 @@ endfunction
 
 function! LightlineFugitive()
   try
-    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD\|MRU\|Diff\|UndoTree' && &ft !~? 'vimfiler' && exists('*fugitive#head')
+    if expand('%:t') !~? 'Tagbar\|Gundo\|NERD\|MRU\|Diff\|UndoTree\|Fugitive' && &ft !~? 'vimfiler' && exists('*fugitive#head')
       let mark = '⭠ '
       let branch = fugitive#head()
       return branch !=# '' ? mark.branch : ''
