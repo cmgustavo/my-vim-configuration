@@ -15,7 +15,7 @@ set nofixendofline
 
 " Have some logic when indenting
 filetype indent on
-"set tabstop=2
+set tabstop=2
 set shiftwidth=2
 set softtabstop=2
 set expandtab
@@ -35,7 +35,7 @@ set shell=/bin/bash
 set lazyredraw
 set matchtime=3
 set autoread
-"set backspace=indent,eol,start
+set backspace=indent,eol,start
 "set pastetoggle=<F3>
 
 " No annoying sound on errors
@@ -89,19 +89,21 @@ set backupdir=/tmp
 nnoremap ; :
 
 " Make Vim to handle long lines nicely.
-set wrap
 "set textwidth=120
 "set formatoptions=qrn1
 "set colorcolumn=120
 
+au BufRead,BufNewFile *.txt setlocal textwidth=80
+au BufRead,BufNewFile *.txt setlocal colorcolumn=80
+
 " When editing a text file, if you want word wrapping, but only want line breaks inserted when you explicitly press the Enter key
-set wrap
-set linebreak
-set nolist  " list disables linebreak
+"set wrap
+"set linebreak
+"set nolist  " list disables linebreak
 
 " Prevent Vim from automatically inserting line breaks in newly entered text
-set textwidth=0
-set wrapmargin=0
+"set textwidth=0
+"set wrapmargin=0
 
 " Turn backup off, since most stuff is in SVN, git et.c anyway...
 set nobackup
@@ -152,7 +154,7 @@ map <D-*> :b#<CR>
 nnoremap <silent> <D-+> :BufExplorer<CR>
 
 " Syntax highlight for github .md files "
-au BufRead,BufNewFile *.md set filetype=markdown
+"au BufRead,BufNewFile *.md set filetype=markdown
 
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
 map <space> /
@@ -210,22 +212,22 @@ Plugin 'flazz/vim-colorschemes'
 Plugin 'scrooloose/nerdtree.git'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'jlanzarotta/bufexplorer'
+"Plugin 'bling/vim-bufferline' " list buffer in command line
 Plugin 'jiangmiao/auto-pairs'
 Plugin 'tpope/vim-fugitive' " Git
 Plugin 'junegunn/gv.vim' " Show commits
 Plugin 'itchyny/lightline.vim'
 Plugin 'ycm-core/YouCompleteMe.git'
 Plugin 'Valloric/MatchTagAlways.git'
-Plugin 'jelera/vim-javascript-syntax'
+"Plugin 'jelera/vim-javascript-syntax'
 Plugin 'leafgarland/typescript-vim'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'prettier/vim-prettier', {
-  \ 'do': 'npm install',
-  \ 'for': ['javascript', 'typescript', 'css', 'scss'] }
-
+"Plugin 'prettier/vim-prettier', {
+"  \ 'do': 'npm install',
+"  \ 'for': ['javascript', 'typescript', 'scss'] }
 Plugin 'yegappan/mru'
 Plugin 'mbbill/undotree'
-Plugin 'bumaociyuan/vim-swift'
+"Plugin 'bumaociyuan/vim-swift'
 Plugin 'cakebaker/scss-syntax.vim'
 "Plugin 'vim-syntastic/syntastic'
 Plugin 'dense-analysis/ale'
@@ -233,13 +235,21 @@ Plugin 'dense-analysis/ale'
 "Plugin 'Xuyuanp/nerdtree-git-plugin'
 "Plugin 'ryanoasis/vim-devicons'
 
-Plugin 'vimwiki/vimwiki'
+"Plugin 'vimwiki/vimwiki'
 
-" ====== Snippet ===== "
+" Android
+"Plugin 'hsanson/vim-android'
+
+"====== Snippet ===== "
 " Track the engine.
 Plugin 'SirVer/ultisnips'
 " Snippets are separated from the engine. Add this if you want them:
 Plugin 'honza/vim-snippets'
+
+" === Git ==== "
+"Plugin 'airblade/vim-gitgutter.git'
+
+Plugin 'kamykn/spelunker.vim' " Spell checker: https://github.com/kamykn/spelunker.vim
 
 call vundle#end()
 filetype plugin indent on
@@ -303,16 +313,20 @@ endfun
 command! -nargs=1 FindFile call FindFiles(<q-args>)
 
 " Start nerdtree
-if has("gui_running")
+"if has("gui_running")
 "  autocmd vimenter * NERDTree
 "  autocmd VimEnter * wincmd p
-endif
+"endif
 " Mapping to NERDTree
 map <leader>nn :NERDTreeToggle<cr>
+map <leader>nc :NERDTreeToggle Copay<cr>
+map <leader>nf :NERDTreeFocus<cr>
+nnoremap <silent> <Leader>mm :NERDTreeFind<CR>
 let NERDTreeShowBookmarks=1
-let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$']
+let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', 'node_modules']
 let g:NERDTreeWinPos = 'left'
 let g:NERDTreeWinSize = 30
+"let g:NERDTreeMinimalUI = 1
 
 " ctrl-p
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -326,15 +340,16 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 " UndoTree
 nnoremap <leader>- :UndotreeToggle<CR>
 if !exists('g:undotree_WindowLayout')
-  let g:undotree_WindowLayout = 1
+  let g:undotree_WindowLayout = 4
 endif
-"let g:gundo_width = 45
-"let g:gundo_preview_height = 40
-"let g:gundo_right = 1
+let g:undotree_SetFocusWhenToggle = 1
+let g:undotree_DiffpanelHeight = 20
+let g:undotree_ShortIndicators = 1
+let g:undotree_HelpLine = 0
 
 
 " Typescript
-let g:typescript_indent_disable = 1
+"let g:typescript_indent_disable = 1
 "autocmd QuickFixCmdPost [^l]* nested cwindow
 "autocmd QuickFixCmdPost    l* nested lwindow
 "autocmd FileType typescript setlocal completeopt-=menu
@@ -365,6 +380,7 @@ let g:typescript_indent_disable = 1
 "let g:AutoPairsShortcutBackInsert = '<M-b>'
 "au Filetype typescript let b:AutoPairs = {'(':')', '[':']', '{':'}',"'":"'",'"':'"', '`':'`'}
 au Filetype html let b:AutoPairs = AutoPairsDefine({'<!--' : '-->', '<' : '>'})
+au Filetype txt let b:AutoPairs = {"(": ")"}
 "let g:AutoPairs['<']='>'
 
 " ALE
@@ -374,18 +390,34 @@ let g:ale_completion_tsserver_autoimport = 1
 "let g:ale_sign_error = '>>'
 "let g:ale_sign_warning = '--'
 "let g:ale_fixers = ['prettier', 'eslint']
+"\   '*': ['remove_trailing_lines', 'trim_whitespace'],
 let g:ale_fixers = {
-\   '*': ['remove_trailing_lines', 'trim_whitespace'],
 \   'javascript': ['eslint', 'prettier'],
-\   'typescript': ['prettier'],
+\   'typescript': ['prettier']
 \}
 let g:ale_fix_on_save = 1
 nnoremap <leader>aa :ALEGoToDefinition<CR>
 nnoremap <leader>av :ALEGoToDefinitionInVSplit<CR>
+nmap ]w :ALENextWrap<CR>
+nmap [w :ALEPreviousWrap<CR>
+augroup VimDiff
+  autocmd!
+  autocmd VimEnter,BufEnter,FilterWritePre * if &diff | ALEDisable | endif
+augroup END
+let g:ale_pattern_options = {
+\   '.*\.json$': {'ale_enabled': 0},
+\   '.*\.java$': {'ale_enabled': 0},
+\   '.*\.m$': {'ale_enabled': 0},
+\   '.*\.h$': {'ale_enabled': 0},
+\   '.*\.xml$': {'ale_enabled': 0},
+\   '.*\.md$': {'ale_enabled': 0},
+\   '.*www/.*\.js$': {'ale_enabled': 0},
+\}
+let g:ale_set_ballons = 0
 
 " Adds current datetime
-:nnoremap <F5> "=strftime("%a %d %b %Y")<CR>P
-:inoremap <F5> <C-R>=strftime("%a %d %b %Y")<CR>
+nnoremap <F5> "=strftime("%a %d %b %Y")<CR>P
+inoremap <F5> <C-R>=strftime("%a %d %b %Y")<CR>
 
 " Fugitive
 nnoremap <leader>gs :Gstatus<CR>
@@ -403,6 +435,55 @@ nnoremap <leader>gm :Git checkout master<CR>
 nnoremap <leader>g- :Git checkout -<CR>
 nnoremap <leader>grm :Grebase -i master<CR>
 
+" Vim Wiki
+"let g:vimwiki_list = [{'path': '~/vimwiki/', 'default': 'markdown', 'ext': '.txt'}]
+"let g:vimwiki-option-auto_toc = 1
+"let g:vimwiki-option-list_margin = 0
+
+" Tabs window
+if has("gui_macvim")
+  " Press Ctrl-Tab to switch between open tabs (like browser tabs) to
+  " the right side. Ctrl-Shift-Tab goes the other way.
+  noremap <C-Tab> :tabnext<CR>
+  noremap <C-S-Tab> :tabprev<CR>
+
+  " Switch to specific tab numbers with Command-number
+  noremap <D-1> :tabn 1<CR>
+  noremap <D-2> :tabn 2<CR>
+  noremap <D-3> :tabn 3<CR>
+  noremap <D-4> :tabn 4<CR>
+  noremap <D-5> :tabn 5<CR>
+  noremap <D-6> :tabn 6<CR>
+  noremap <D-7> :tabn 7<CR>
+  noremap <D-8> :tabn 8<CR>
+  noremap <D-9> :tabn 9<CR>
+  " Command-0 goes to the last tab
+  noremap <D-0> :tablast<CR>
+endif
+
+" Android
+let g:android_sdk_path = '/Users/gustavo/Library/Android/sdk'
+let g:gradle_path = '/Users/gustavo/.sdkman/candidates/gradle/current/bin'
+
+" Spell checker
+let g:spelunker_disable_auto_group = 1
+augroup spelunker
+  autocmd!
+  autocmd BufWinEnter,BufWritePost *.txt,*.md call spelunker#check()
+augroup END
+" Create own custom autogroup to enable spelunker.vim for specific filetypes.
+"augroup spelunker
+  "autocmd!
+  "" Setting for g:spelunker_check_type = 1:
+  "autocmd BufWinEnter,BufWritePost *.txt,*.md call spelunker#check()
+
+  "" Setting for g:spelunker_check_type = 2:
+  "autocmd CursorHold *.txt,*.md call spelunker#check_displayed_words()
+"augroup END
+"" Override highlight setting.
+"highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
+"highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
+
 "=========== Status Bar =========="
 set laststatus=2
 set noshowmode
@@ -410,7 +491,7 @@ let g:lightline = {
       \ 'colorscheme': 'wombat',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
-      \   'right': [ [ 'linter' ], [ 'lineinfo', 'percent'], [ 'filetype', 'fileencoding' ] ]
+      \   'right': [ [ 'linter' ], [ 'filetype', 'fileencoding' ], [ 'lineinfo', 'percent'] ]
       \ },
       \ 'component_function': {
       \   'percent': 'MyLightLinePercent',
@@ -420,18 +501,24 @@ let g:lightline = {
       \   'filetype': 'LightlineFiletype',
       \   'fileencoding': 'LightlineFileencoding',
       \   'mode': 'LightlineMode',
-      \   'ctrlpmark': 'CtrlPMark',
-      \   'linter': 'LinterStatus'
+      \   'linter': 'LinterStatus',
+      \   'ctrlpmark': 'CtrlPMark'
       \ },
       \ 'separator': { 'left': '⮀', 'right': '' },
       \ 'subseparator': { 'left': '⮁', 'right': '' }
       \ }
 " \ 'separator': { 'left': '⮀', 'right': '⮂' },
 "\ 'subseparator': { 'left': '⮁', 'right': '⮃' }
+"\   'linter': 'LinterStatus',
+
+"let g:bufferline_echo = 0
+function! BufferLine()
+  let st=g:bufferline#refresh_status()
+  return g:bufferline_status_info.before . g:bufferline_status_info.current . g:bufferline_status_info.after
+endfunction
 
 function! LinterStatus() abort
   let l:counts = ale#statusline#Count(bufnr(''))
-
   let l:all_errors = l:counts.error + l:counts.style_error
   let l:all_non_errors = l:counts.total - l:all_errors
 
