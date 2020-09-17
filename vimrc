@@ -26,12 +26,12 @@ set cindent
 
 " More Common Settings
 "set encoding=utf8
-set encoding=UTF-8
-set scrolloff=2
+set encoding=utf-8
+set scrolloff=5
 set ttyfast
 set ruler
 set undofile
-set shell=/bin/bash
+set shell=/bin/zsh
 set lazyredraw
 set matchtime=3
 set autoread
@@ -95,6 +95,7 @@ nnoremap ; :
 
 au BufRead,BufNewFile *.txt setlocal textwidth=80
 au BufRead,BufNewFile *.txt setlocal colorcolumn=80
+au BufRead,BufNewFile *.txt setlocal wrapmargin=2
 
 " When editing a text file, if you want word wrapping, but only want line breaks inserted when you explicitly press the Enter key
 "set wrap
@@ -109,6 +110,9 @@ au BufRead,BufNewFile *.txt setlocal colorcolumn=80
 set nobackup
 set nowb
 set noswapfile
+
+" Misc
+set autochdir
 
 " =========== END Basic Vim Settings ===========
 
@@ -193,6 +197,14 @@ elseif has("unix")
   set gfn=Monospace\ 11
 endif
 
+" ========== Python 3 support ==========
+" Python Setting {
+  set pythondll=/usr/local/Frameworks/Python.framework/Versions/3.7/Python
+  set pythonhome=/usr/local/Frameworks/Python.framework/Versions/3.7
+  set pythonthreedll=/usr/local/Frameworks/Python.framework/Versions/3.7/Python
+  set pythonthreehome=/usr/local/Frameworks/Python.framework/Versions/3.7
+" }
+
 " ========== END Gvim Settings ==========
 
 " ========== Plugin Settings =========="
@@ -210,7 +222,7 @@ Plugin 'VundleVim/Vundle.vim'
 " Plugins
 Plugin 'flazz/vim-colorschemes'
 Plugin 'scrooloose/nerdtree.git'
-Plugin 'scrooloose/nerdcommenter'
+Plugin 'preservim/nerdcommenter'
 Plugin 'jlanzarotta/bufexplorer'
 "Plugin 'bling/vim-bufferline' " list buffer in command line
 Plugin 'jiangmiao/auto-pairs'
@@ -232,13 +244,20 @@ Plugin 'cakebaker/scss-syntax.vim'
 "Plugin 'vim-syntastic/syntastic'
 Plugin 'dense-analysis/ale'
 
-"Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'Xuyuanp/nerdtree-git-plugin'
 "Plugin 'ryanoasis/vim-devicons'
 
-"Plugin 'vimwiki/vimwiki'
+Plugin 'vimwiki/vimwiki'
 
 " Android
 "Plugin 'hsanson/vim-android'
+
+"====== ReactJS ====== "
+Plugin 'pangloss/vim-javascript'
+Plugin 'maxmellon/vim-jsx-pretty'
+
+"====== Emmet ====== "
+Plugin 'mattn/emmet-vim'
 
 "====== Snippet ===== "
 " Track the engine.
@@ -249,7 +268,11 @@ Plugin 'honza/vim-snippets'
 " === Git ==== "
 "Plugin 'airblade/vim-gitgutter.git'
 
-Plugin 'kamykn/spelunker.vim' " Spell checker: https://github.com/kamykn/spelunker.vim
+" === Spell checker === "
+Plugin 'kamykn/spelunker.vim'
+
+" === Solidity === "
+Plugin 'tomlion/vim-solidity'
 
 call vundle#end()
 filetype plugin indent on
@@ -347,7 +370,6 @@ let g:undotree_DiffpanelHeight = 20
 let g:undotree_ShortIndicators = 1
 let g:undotree_HelpLine = 0
 
-
 " Typescript
 "let g:typescript_indent_disable = 1
 "autocmd QuickFixCmdPost [^l]* nested cwindow
@@ -386,6 +408,8 @@ au Filetype txt let b:AutoPairs = {"(": ")"}
 " ALE
 "let g:ale_completion_enabled = 1
 let g:ale_completion_tsserver_autoimport = 1
+let g:ale_hover_cursor = 0
+let g:ale_set_highlights = 0
 "let g:ale_sign_column_always = 1
 "let g:ale_sign_error = '>>'
 "let g:ale_sign_warning = '--'
@@ -411,6 +435,7 @@ let g:ale_pattern_options = {
 \   '.*\.h$': {'ale_enabled': 0},
 \   '.*\.xml$': {'ale_enabled': 0},
 \   '.*\.md$': {'ale_enabled': 0},
+\   '.*\.txt$': {'ale_enabled': 0},
 \   '.*www/.*\.js$': {'ale_enabled': 0},
 \}
 let g:ale_set_ballons = 0
@@ -436,7 +461,7 @@ nnoremap <leader>g- :Git checkout -<CR>
 nnoremap <leader>grm :Grebase -i master<CR>
 
 " Vim Wiki
-"let g:vimwiki_list = [{'path': '~/vimwiki/', 'default': 'markdown', 'ext': '.txt'}]
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'default': 'markdown', 'ext': '.txt'}]
 "let g:vimwiki-option-auto_toc = 1
 "let g:vimwiki-option-list_margin = 0
 
@@ -483,6 +508,12 @@ augroup END
 "" Override highlight setting.
 "highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
 "highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
+
+" Nerdcommenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
 
 "=========== Status Bar =========="
 set laststatus=2
