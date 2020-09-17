@@ -93,9 +93,8 @@ nnoremap ; :
 "set formatoptions=qrn1
 "set colorcolumn=120
 
+" For vimwiki
 au BufRead,BufNewFile *.txt setlocal textwidth=80
-au BufRead,BufNewFile *.txt setlocal colorcolumn=80
-au BufRead,BufNewFile *.txt setlocal wrapmargin=2
 
 " When editing a text file, if you want word wrapping, but only want line breaks inserted when you explicitly press the Enter key
 "set wrap
@@ -491,10 +490,31 @@ let g:android_sdk_path = '/Users/gustavo/Library/Android/sdk'
 let g:gradle_path = '/Users/gustavo/.sdkman/candidates/gradle/current/bin'
 
 " Spell checker
+set nospell
+
+" Option to disable word checking.
+" Disable URI checking. (default: 0)
+let g:spelunker_disable_uri_checking = 1
+
+" Disable email-like words checking. (default: 0)
+let g:spelunker_disable_email_checking = 1
+
+" Disable account name checking, e.g. @foobar, foobar@. (default: 0)
+" NOTE: Spell checking is also disabled for JAVA annotations.
+let g:spelunker_disable_account_name_checking = 1
+
+" Disable acronym checking. (default: 0)
+let g:spelunker_disable_acronym_checking = 1
+
+" Disable checking words in backtick/backquote. (default: 0)
+let g:spelunker_disable_backquoted_checking = 1
+
+" Disable default autogroup. (default: 0)
 let g:spelunker_disable_auto_group = 1
 augroup spelunker
   autocmd!
   autocmd BufWinEnter,BufWritePost *.txt,*.md call spelunker#check()
+  " autocmd CursorHold *.txt,*.md call spelunker#check_displayed_words()
 augroup END
 " Create own custom autogroup to enable spelunker.vim for specific filetypes.
 "augroup spelunker
@@ -506,8 +526,8 @@ augroup END
   "autocmd CursorHold *.txt,*.md call spelunker#check_displayed_words()
 "augroup END
 "" Override highlight setting.
-"highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
-"highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
+highlight SpelunkerSpellBad cterm=underline ctermfg=247 gui=underline guifg=#9e9e9e
+highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underline guifg=NONE
 
 " Nerdcommenter
 " Add spaces after comment delimiters by default
