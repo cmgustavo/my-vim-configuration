@@ -8,7 +8,10 @@ set hidden
 set history=50
 
 " Add a bit extra margin to the left
-"set foldcolumn=1
+" set foldcolumn=1
+
+" Line space
+set linespace=1
 
 " No newline at the end of file
 set nofixendofline
@@ -51,7 +54,7 @@ endif
 
 " Line Number
 "set relativenumber
-"set number
+set number
 "set norelativenumber
 
 " Better Search
@@ -169,7 +172,7 @@ map <c-space> ?
 
 if has("gui_running")
   set background=dark
-  colorscheme gruvbox
+  colorscheme badwolf
   set cursorline
   set mouse=a
   " Removing scrollbars
@@ -198,10 +201,10 @@ endif
 
 " ========== Python 3 support ==========
 " Python Setting {
-  set pythondll=/usr/local/Frameworks/Python.framework/Versions/3.7/Python
-  set pythonhome=/usr/local/Frameworks/Python.framework/Versions/3.7
-  set pythonthreedll=/usr/local/Frameworks/Python.framework/Versions/3.7/Python
-  set pythonthreehome=/usr/local/Frameworks/Python.framework/Versions/3.7
+"  set pythondll=/usr/local/Frameworks/Python.framework/Versions/3.7/Python
+ " set pythonhome=/usr/local/Frameworks/Python.framework/Versions/3.7
+ " set pythonthreedll=/usr/local/Frameworks/Python.framework/Versions/3.7/Python
+ " set pythonthreehome=/usr/local/Frameworks/Python.framework/Versions/3.7
 " }
 
 " ========== END Gvim Settings ==========
@@ -349,6 +352,9 @@ let NERDTreeIgnore=['\.vim$', '\~$', '\.pyc$', 'node_modules']
 let g:NERDTreeWinPos = 'left'
 let g:NERDTreeWinSize = 30
 "let g:NERDTreeMinimalUI = 1
+" Exit if nerdtree only is open
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
 
 " ctrl-p
 set runtimepath^=~/.vim/bundle/ctrlp.vim
@@ -407,8 +413,8 @@ au Filetype txt let b:AutoPairs = {"(": ")"}
 " ALE
 "let g:ale_completion_enabled = 1
 let g:ale_completion_tsserver_autoimport = 1
-let g:ale_hover_cursor = 0
-let g:ale_set_highlights = 0
+let g:ale_hover_cursor = 1
+let g:ale_set_highlights = 1
 "let g:ale_sign_column_always = 1
 "let g:ale_sign_error = '>>'
 "let g:ale_sign_warning = '--'
@@ -460,7 +466,7 @@ nnoremap <leader>g- :Git checkout -<CR>
 nnoremap <leader>grm :Grebase -i master<CR>
 
 " Vim Wiki
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'default': 'markdown', 'ext': '.txt'}]
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'default', 'ext': '.txt'}]
 "let g:vimwiki-option-auto_toc = 1
 "let g:vimwiki-option-list_margin = 0
 
@@ -534,15 +540,18 @@ highlight SpelunkerComplexOrCompoundWord cterm=underline ctermfg=NONE gui=underl
 let g:NERDSpaceDelims = 1
 " Use compact syntax for prettified multi-line comments
 let g:NERDCompactSexyComs = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+
 
 "=========== Status Bar =========="
 set laststatus=2
 set noshowmode
 let g:lightline = {
-      \ 'colorscheme': 'wombat',
+      \ 'colorscheme': 'powerline',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ], [ 'fugitive', 'filename' ], ['ctrlpmark'] ],
-      \   'right': [ [ 'linter' ], [ 'filetype', 'fileencoding' ], [ 'lineinfo', 'percent'] ]
+      \   'right': [ [ 'linter' ], [ 'filetype', 'fileencoding' ], ['percent'] ]
       \ },
       \ 'component_function': {
       \   'percent': 'MyLightLinePercent',
